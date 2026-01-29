@@ -28,7 +28,7 @@
 			</el-col>
 			<el-col :span="24">
 				<el-form-item>
-					<el-button type="primary" style="width: 100%" size="large" :loading="false"
+					<el-button type="primary" style="width: 100%" size="large" :loading="loading"
 						@click="submitForm(loginFormRef)">
 						登录
 					</el-button>
@@ -91,7 +91,7 @@ import { doLogin } from "@/api/user.ts";
 import useUserStore from "@/store/modules/user";
 // import {FormInstance, FormRules} from "element-plus";
 import { FormInstance, FormRules } from "element-plus";
-// import { ref, reactive } from "vue";
+import { ref, reactive } from "vue";
 
 interface LoginForm {
 	username: string;
@@ -109,6 +109,10 @@ const rules = reactive<FormRules<LoginForm>>({
 	username: [{ required: true, message: "该项为必填项", trigger: "blur" }],
 	password: [{ required: true, message: "该项为必填项", trigger: "blur" }]
 });
+
+// 登录加载状态
+const loading = ref(false);
+
 const router = useRouter();
 
 // 表单提交
@@ -116,17 +120,23 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 	if (!formEl) return;
 	await formEl.validate(async valid => {
 		if (valid) {
+			loading.value = true;
 			try {
 				const res = await doLogin(loginForm);
 				console.log(res);
 				const { token } = res.data;
 				const userStore = useUserStore();
 				userStore.getToken(token);
-				router.push({ name: "dashboard" });
+				ElMessage.success("登录成功");
+				// 延迟跳转，让用户看到加载效果
+				setTimeout(() => {
+					loading.value = false;
+					router.push({ name: "dashboard" });
+				}, 800);
 			} catch (error) {
-				ElMessage.error("请求失败");
+				loading.value = false;
+				ElMessage.error("登录失败，请检查用户名和密码");
 			}
-		} else {
 		}
 	});
 };

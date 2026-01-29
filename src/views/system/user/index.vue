@@ -1,27 +1,67 @@
 <template>
   <div class="page-container">
-    <el-card class="page-card">
+    <!-- 搜索区域 -->
+    <el-card class="search-card" shadow="never">
+      <div class="search-area">
+        <div class="search-form-wrapper">
+          <!-- 始终显示的基础搜索条件 -->
+          <div class="search-form-base">
+            <el-input
+              v-model="searchKey"
+              placeholder="请输入用户名/昵称"
+              class="search-input"
+              clearable
+              @keyup.enter="handleSearch"
+            >
+              <template #prefix>
+                <el-icon><Search /></el-icon>
+              </template>
+            </el-input>
+          </div>
+          <!-- 可展开/折叠的额外搜索条件 -->
+          <el-collapse-transition>
+            <div v-show="searchExpanded" class="search-form-extra">
+              <el-select v-model="searchRole" placeholder="选择角色" clearable class="search-select">
+                <el-option label="超级管理员" value="超级管理员" />
+                <el-option label="管理员" value="管理员" />
+                <el-option label="普通用户" value="普通用户" />
+              </el-select>
+              <el-select v-model="searchStatus" placeholder="选择状态" clearable class="search-select">
+                <el-option label="启用" :value="1" />
+                <el-option label="禁用" :value="0" />
+              </el-select>
+              <el-date-picker
+                v-model="searchDateRange"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                class="search-date"
+              />
+            </div>
+          </el-collapse-transition>
+        </div>
+        <div class="search-btns">
+          <el-button :icon="Search" type="primary" @click="handleSearch">搜索</el-button>
+          <el-button :icon="RefreshRight" @click="handleReset">重置</el-button>
+          <el-button link type="primary" class="expand-btn" @click="searchExpanded = !searchExpanded">
+            <span>{{ searchExpanded ? '收起' : '展开' }}</span>
+            <el-icon class="expand-icon" :class="{ 'is-expanded': searchExpanded }">
+              <ArrowDown />
+            </el-icon>
+          </el-button>
+        </div>
+      </div>
+    </el-card>
+
+    <!-- 数据展示区域 -->
+    <el-card class="table-card" shadow="never">
       <template #header>
         <div class="card-header">
-          <span class="title">用户管理</span>
+          <span class="title">用户列表</span>
           <el-button type="primary" :icon="Plus" @click="handleAdd">新增用户</el-button>
         </div>
       </template>
-
-      <!-- 搜索栏 -->
-      <div class="search-bar">
-        <el-input
-          v-model="searchKey"
-          placeholder="请输入用户名/昵称"
-          class="search-input"
-          clearable
-          @keyup.enter="handleSearch"
-        >
-          <template #append>
-            <el-button :icon="Search" @click="handleSearch" />
-          </template>
-        </el-input>
-      </div>
 
       <!-- 数据表格 -->
       <el-table :data="userList" v-loading="loading" stripe>
@@ -73,11 +113,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Search, Edit, Delete } from '@element-plus/icons-vue';
+import { Plus, Search, Edit, Delete, RefreshRight, ArrowDown } from '@element-plus/icons-vue';
 import { getUserList, deleteUser, updateUserStatus } from '@/api/user';
 
 const loading = ref(false);
 const searchKey = ref('');
+const searchRole = ref('');
+const searchStatus = ref('');
+const searchDateRange = ref([]);
+const searchExpanded = ref(false);
 const userList = ref([]);
 const page = ref(1);
 const pageSize = ref(10);
@@ -109,6 +153,16 @@ const fetchUserList = async () => {
 
 // 搜索
 const handleSearch = () => {
+  page.value = 1;
+  fetchUserList();
+};
+
+// 重置
+const handleReset = () => {
+  searchKey.value = '';
+  searchRole.value = '';
+  searchStatus.value = '';
+  searchDateRange.value = [];
   page.value = 1;
   fetchUserList();
 };
@@ -172,8 +226,77 @@ onMounted(() => {
   padding: 0;
 }
 
-.page-card {
-  min-height: calc(100vh - 180px);
+// 搜索区域卡片 - 圆角增大
+.search-card {
+  margin-bottom: 16px;
+  border-radius: 12px;
+  :deep(.el-card__body) {
+    padding: 16px 20px;
+  }
+}
+
+.search-area {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.search-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.search-form-base,
+.search-form-extra {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .search-input {
+    width: 240px;
+  }
+
+  .search-select {
+    width: 140px;
+  }
+
+  .search-date {
+    width: 260px;
+  }
+}
+
+.search-btns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  .expand-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px;
+
+    .expand-icon {
+      transition: transform 0.3s;
+
+      &.is-expanded {
+        transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+// 表格区域卡片 - 圆角增大
+.table-card {
+  min-height: calc(100vh - 280px);
+  border-radius: 12px;
+  :deep(.el-card__header) {
+    padding: 12px 20px;
+  }
 }
 
 .card-header {
@@ -184,14 +307,6 @@ onMounted(() => {
   .title {
     font-size: 16px;
     font-weight: 600;
-  }
-}
-
-.search-bar {
-  margin-bottom: 20px;
-
-  .search-input {
-    width: 300px;
   }
 }
 

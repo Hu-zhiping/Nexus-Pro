@@ -71,8 +71,8 @@ const menuActiveTextColor = computed(() => '#fff');
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
+  background: var(--color-sidebar-bg);
+  border-right: 1px solid var(--color-sidebar-border);
 }
 
 // Logo 区域
@@ -82,11 +82,11 @@ const menuActiveTextColor = computed(() => '#fff');
   height: 72px;
   padding: 0 20px;
   cursor: pointer;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--color-sidebar-border);
   transition: all 0.3s;
 
   &:hover {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+    background: var(--color-sidebar-bg-hover);
   }
 
   .logo-icon-wrapper {
@@ -95,10 +95,10 @@ const menuActiveTextColor = computed(() => '#fff');
     justify-content: center;
     width: 40px;
     height: 40px;
-    background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
     border-radius: 10px;
     flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.3);
 
     .logo-icon {
       color: #fff;
@@ -113,19 +113,15 @@ const menuActiveTextColor = computed(() => '#fff');
   }
 
   .logo-text {
-    color: #fff;
+    color: var(--color-sidebar-text);
     font-size: 18px;
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: -0.5px;
-    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
 
   .logo-subtitle {
-    color: #64748b;
+    color: var(--color-text-placeholder);
     font-size: 11px;
     font-weight: 500;
     text-transform: uppercase;
@@ -157,29 +153,28 @@ const menuActiveTextColor = computed(() => '#fff');
     border-radius: 8px;
     font-size: 14px;
     font-weight: 500;
+    color: var(--color-sidebar-text);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05) !important;
-      color: #fff !important;
+      background: var(--color-sidebar-bg-hover) !important;
+      color: var(--color-sidebar-text-hover) !important;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(139, 92, 246, 0.9) 100%) !important;
-      color: #fff !important;
-      box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+      background: var(--color-sidebar-active-bg, rgba(59, 130, 246, 0.1)) !important;
+      color: var(--color-sidebar-text-active) !important;
+      font-weight: 600;
     }
   }
 
   :deep(.el-sub-menu) {
-    display: flex;
-    justify-content: center;
     .el-sub-menu__title {
-      color: #94a3b8;
+      color: var(--color-sidebar-text);
     }
 
     &.is-active {
       > .el-sub-menu__title {
-        color: #fff !important;
+        color: var(--color-sidebar-text-active) !important;
       }
     }
 
@@ -191,10 +186,15 @@ const menuActiveTextColor = computed(() => '#fff');
         height: 40px;
         line-height: 40px;
         font-size: 13px;
-        color: #64748b;
+        color: var(--color-sidebar-text);
+
+        &:hover {
+          color: var(--color-sidebar-text-hover) !important;
+        }
 
         &.is-active {
-          color: #fff !important;
+          color: var(--color-sidebar-text-active) !important;
+          background: var(--color-sidebar-active-bg, rgba(59, 130, 246, 0.1)) !important;
         }
       }
     }
@@ -214,6 +214,25 @@ const menuActiveTextColor = computed(() => '#fff');
     .logo-icon-wrapper {
       width: 36px;
       height: 36px;
+    }
+  }
+
+  // 折叠时菜单项居中
+  .sidebar-el-menu {
+    :deep(.el-menu-item),
+    :deep(.el-sub-menu__title) {
+      .menu-item-content {
+        justify-content: center !important;
+        padding: 0 !important;
+      }
+
+      .menu-icon {
+        margin-right: 0 !important;
+      }
+
+      .menu-title {
+        display: none;
+      }
     }
   }
 }

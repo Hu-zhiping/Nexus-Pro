@@ -227,21 +227,21 @@ const handleUserCommand = (command: string) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: none;
-  background: #f1f5f9;
-  border-radius: 10px;
-  color: #64748b;
+  background: transparent;
+  border-radius: 0;
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   flex-shrink: 0; // 防止按钮被压缩
 
   &:hover {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+    background: transparent;
     color: var(--color-primary);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    transform: none;
+    box-shadow: none;
   }
 }
 
@@ -260,30 +260,30 @@ const handleUserCommand = (command: string) => {
   align-items: center;
   gap: 10px;
   margin-left: 8px;
-  padding: 6px 12px 6px 6px;
-  background: #f1f5f9;
-  border-radius: 12px;
+  padding: 6px 8px;
+  background: transparent;
+  border-radius: 0;
   cursor: pointer;
   transition: all 0.3s;
 
   &:hover {
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+    background: transparent;
+    box-shadow: none;
   }
 
   .user-avatar {
-    border: 2px solid #fff;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: none;
+    box-shadow: none;
   }
 
   .user-name {
     font-size: 14px;
-    color: #334155;
-    font-weight: 600;
+    color: var(--color-text-primary);
+    font-weight: 500;
   }
 
   .user-arrow {
-    color: #94a3b8;
+    color: var(--color-text-placeholder);
   }
 }
 
@@ -303,20 +303,20 @@ const handleUserCommand = (command: string) => {
   }
 
   .nav-btn {
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
     color: #94a3b8;
 
     &:hover {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      background: transparent;
       color: #fff;
     }
   }
 
   .user-info {
-    background: rgba(255, 255, 255, 0.05);
+    background: transparent;
 
     &:hover {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+      background: transparent;
     }
 
     .user-name {

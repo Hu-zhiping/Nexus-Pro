@@ -94,8 +94,13 @@ const resolvePath = (routePath: string) => {
   white-space: nowrap;
 }
 
-// 子菜单样式
+// 子菜单弹出框样式（折叠后显示）
 :deep(.sidebar-submenu) {
+  background: var(--color-sidebar-submenu-bg) !important;
+  border: 1px solid var(--color-sidebar-border) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  padding: 8px !important;
+
   .el-menu {
     background: transparent !important;
   }
@@ -104,19 +109,26 @@ const resolvePath = (routePath: string) => {
   .el-sub-menu__title {
     height: 40px;
     line-height: 40px;
-    color: #64748b;
+    color: var(--color-sidebar-text);
     border-radius: 6px;
     margin: 2px 0;
+    font-weight: 500;
 
     &:hover {
-      background: rgba(255, 255, 255, 0.05) !important;
-      color: #fff !important;
+      background: var(--color-sidebar-bg-hover) !important;
+      color: var(--color-sidebar-text-hover) !important;
     }
 
     &.is-active {
-      background: linear-gradient(135deg, rgba(59, 130, 246, 0.8) 0%, rgba(139, 92, 246, 0.8) 100%) !important;
-      color: #fff !important;
+      background: var(--color-sidebar-active-bg, rgba(59, 130, 246, 0.1)) !important;
+      color: var(--color-sidebar-text-active) !important;
+      font-weight: 600;
     }
+  }
+
+  // 弹出框中的文字
+  .menu-title {
+    color: inherit;
   }
 }
 </style>

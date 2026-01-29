@@ -138,7 +138,7 @@ const themeNames: Record<ThemeType, string> = {
 const layoutModes = [
   { key: 'vertical' as LayoutMode, name: '垂直' },
   { key: 'horizontal' as LayoutMode, name: '水平' },
-  { key: 'mix' as LayoutMode, name: '混合' },
+  { key: 'mix' as LayoutMode, name: '两列菜单' },
 ];
 
 // 监听设置变化
@@ -354,15 +354,27 @@ const onClosed = () => {
 
   &.mix {
     .preview-sidebar {
+      width: 15%;
+      background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 15%;
+      top: 0;
+      bottom: 0;
       width: 20%;
+      background: #ffffff;
+      border-right: 1px solid var(--color-border-light);
     }
 
     .preview-header {
-      left: 20%;
+      left: 35%;
     }
 
     .preview-content {
-      left: 20%;
+      left: 35%;
     }
   }
 }

@@ -1,140 +1,73 @@
-/* ==================== 主题配色 - 现代渐变风格 ==================== */
+/* ==================== 主题变量 ==================== */
 :root {
-  /* 主色调 - 科技蓝 */
+  /* 主色调 */
   --color-primary: #3b82f6;
   --color-primary-rgb: 59, 130, 246;
-  --color-primary-light-3: #60a5fa;
-  --color-primary-light-5: #93c5fd;
-  --color-primary-light-7: #bfdbfe;
-  --color-primary-light-8: #dbeafe;
-  --color-primary-light-9: #eff6ff;
-  --color-primary-dark-2: #2563eb;
+  --color-primary-light: #60a5fa;
+  --color-primary-dark: #2563eb;
 
-  /* 辅助色 - 渐变 */
-  --color-gradient-start: #6366f1;
-  --color-gradient-end: #8b5cf6;
-  --color-gradient-accent: #ec4899;
-
-  /* 功能色 - 成功 */
+  /* 功能色 */
   --color-success: #10b981;
-  --color-success-rgb: 16, 185, 129;
-  --color-success-light-3: #34d399;
-  --color-success-light-5: #6ee7b7;
-  --color-success-light-7: #a7f3d0;
-  --color-success-light-8: #d1fae5;
-  --color-success-light-9: #ecfdf5;
-  --color-success-dark-2: #059669;
-
-  /* 功能色 - 警告 */
   --color-warning: #f59e0b;
-  --color-warning-rgb: 245, 158, 11;
-  --color-warning-light-3: #fbbf24;
-  --color-warning-light-5: #fcd34d;
-  --color-warning-light-7: #fde68a;
-  --color-warning-light-8: #fef3c7;
-  --color-warning-light-9: #fffbeb;
-  --color-warning-dark-2: #d97706;
-
-  /* 功能色 - 危险 */
   --color-danger: #ef4444;
-  --color-danger-rgb: 239, 68, 68;
-  --color-danger-light-3: #f87171;
-  --color-danger-light-5: #fca5a5;
-  --color-danger-light-7: #fecaca;
-  --color-danger-light-8: #fee2e2;
-  --color-danger-light-9: #fef2f2;
-  --color-danger-dark-2: #dc2626;
-
-  /* 功能色 - 信息 */
   --color-info: #6b7280;
-  --color-info-rgb: 107, 114, 128;
-  --color-info-light-3: #9ca3af;
-  --color-info-light-5: #d1d5db;
-  --color-info-light-7: #e5e7eb;
-  --color-info-light-8: #f3f4f6;
-  --color-info-light-9: #f9fafb;
-  --color-info-dark-2: #4b5563;
 
-  /* ==================== 文字颜色 ==================== */
-  --color-text-primary: #111827;
-  --color-text-regular: #374151;
+  /* 文字颜色 */
+  --color-text-primary: #1f2937;
+  --color-text-regular: #4b5563;
   --color-text-secondary: #6b7280;
   --color-text-placeholder: #9ca3af;
   --color-text-disabled: #d1d5db;
 
-  /* ==================== 边框颜色 ==================== */
+  /* 边框颜色 */
   --color-border-base: #e5e7eb;
   --color-border-light: #f3f4f6;
-  --color-border-lighter: #f9fafb;
-  --color-border-extra-light: #fafafa;
-  --color-border-dark: #d1d5db;
-  --color-border-darker: #9ca3af;
 
-  /* ==================== 背景颜色 ==================== */
+  /* 背景颜色 */
   --color-bg-base: #f8fafc;
   --color-bg-page: #ffffff;
-  --color-bg-overlay: rgba(17, 24, 39, 0.75);
-  --color-bg-sidebar: #0f172a;
-  --color-bg-header: #ffffff;
 
-  /* ==================== 布局尺寸 ==================== */
-  --sidebar-width: 240px;
+  /* 浅色侧边栏主题 */
+  --color-sidebar-bg: #ffffff;
+  --color-sidebar-bg-hover: #f1f5f9;
+  --color-sidebar-text: #475569;
+  --color-sidebar-text-hover: #1e293b;
+  --color-sidebar-text-active: #3b82f6;
+  --color-sidebar-border: #e2e8f0;
+  --color-sidebar-submenu-bg: #ffffff;
+
+  /* 布局尺寸 */
+  --sidebar-width: 220px;
   --sidebar-collapsed-width: 64px;
-  --navbar-height: 64px;
-  --tags-view-height: 44px;
-  --header-height: 64px;
+  --navbar-height: 72px;
+  --header-height: 72px;
 
-  /* ==================== 字体 ==================== */
-  --font-family-primary: 'Inter', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-family-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  --font-size-extra-small: 12px;
-  --font-size-small: 13px;
-  --font-size-base: 14px;
-  --font-size-medium: 16px;
-  --font-size-large: 18px;
-  --font-size-extra-large: 20px;
-
-  /* ==================== 圆角 ==================== */
+  /* 圆角 */
   --radius-small: 4px;
   --radius-base: 8px;
   --radius-large: 12px;
-  --radius-xl: 16px;
-  --radius-round: 9999px;
 
-  /* ==================== 阴影 ==================== */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  /* 字体 */
+  --font-family-primary: 'Inter', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-base: 14px;
 
-  /* ==================== 过渡动画 ==================== */
-  --transition-base: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-fast: all 0.15s ease-out;
-  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --transition-fade: opacity 0.2s ease;
-  --transition-slide: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* 过渡动画 */
+  --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
-  /* ==================== z-index ==================== */
-  --z-index-dropdown: 1000;
-  --z-index-sticky: 1020;
-  --z-index-fixed: 1030;
-  --z-index-modal-backdrop: 1040;
-  --z-index-modal: 1050;
-  --z-index-popover: 1060;
-  --z-index-tooltip: 1070;
-  --z-index-toast: 1080;
-  --z-index-loading: 1090;
+/* ==================== 暗色侧边栏主题 ==================== */
+.dark-sidebar {
+  --color-sidebar-bg: #1e293b;
+  --color-sidebar-bg-hover: #334155;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-hover: #ffffff;
+  --color-sidebar-text-active: #60a5fa;
+  --color-sidebar-border: #334155;
+  --color-sidebar-submenu-bg: #334155;
 }
 
 /* ==================== 暗色模式 ==================== */
 .dark {
-  /* 主色调 */
   --color-primary: #60a5fa;
   --color-primary-rgb: 96, 165, 250;
 
@@ -148,21 +81,19 @@
   /* 边框颜色 */
   --color-border-base: #374151;
   --color-border-light: #4b5563;
-  --color-border-lighter: #1f2937;
-  --color-border-extra-light: #111827;
 
   /* 背景颜色 */
-  --color-bg-base: #0f172a;
+  --color-bg-base: #111827;
   --color-bg-page: #1f2937;
-  --color-bg-sidebar: #0f172a;
-  --color-bg-header: #1f2937;
 
-  /* 阴影 */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
-  --shadow-base: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  /* 暗色侧边栏主题 */
+  --color-sidebar-bg: #1e293b;
+  --color-sidebar-bg-hover: #334155;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-text-hover: #ffffff;
+  --color-sidebar-text-active: #60a5fa;
+  --color-sidebar-border: #334155;
+  --color-sidebar-submenu-bg: #334155;
 }
 
 /* ==================== 全局样式 ==================== */
@@ -170,19 +101,16 @@
   box-sizing: border-box;
 }
 
-html {
-  font-family: var(--font-family-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 body {
   margin: 0;
   padding: 0;
   background-color: var(--color-bg-base);
   color: var(--color-text-primary);
+  font-family: var(--font-family-primary);
   font-size: var(--font-size-base);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* 滚动条样式 */
@@ -197,7 +125,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-text-placeholder);
-  border-radius: var(--radius-round);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -214,20 +142,15 @@ body {
 a {
   color: var(--color-primary);
   text-decoration: none;
-  transition: var(--transition-fast);
+  transition: var(--transition-base);
 }
 
 a:hover {
-  color: var(--color-primary-dark-2);
+  color: #2563eb;
 }
 
 /* Element Plus 变量覆盖 */
 :root {
   --el-color-primary: var(--color-primary);
-  --el-color-success: var(--color-success);
-  --el-color-warning: var(--color-warning);
-  --el-color-danger: var(--color-danger);
-  --el-color-info: var(--color-info);
   --el-border-radius-base: var(--radius-base);
-  --el-box-shadow: var(--shadow-card);
 }

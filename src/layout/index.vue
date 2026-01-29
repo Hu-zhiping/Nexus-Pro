@@ -4,14 +4,24 @@
     :class="layoutClasses"
     :style="layoutStyles"
   >
-    <!-- 侧边栏 - 垂直布局/混合布局 -->
-    <aside 
-      v-if="showSidebar" 
+    <!-- 侧边栏 - 垂直布局 -->
+    <aside
+      v-if="showSidebar && !isMixLayout"
       class="layout-sidebar"
       :class="{ 'is-collapse': isCollapse, 'is-mobile': isMobile }"
       :style="sidebarStyle"
     >
       <Sidebar />
+    </aside>
+
+    <!-- 两列菜单 - 混合布局 -->
+    <aside
+      v-if="isMixLayout"
+      class="layout-sidebar mix-layout"
+      :class="{ 'is-mobile': isMobile }"
+      :style="mixSidebarStyle"
+    >
+      <MixSidebar />
     </aside>
 
     <!-- 移动端遮罩层 -->
@@ -78,6 +88,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import Sidebar from './components/Sidebar/index.vue';
+import MixSidebar from './components/MixSidebar/index.vue';
 import TopMenu from './components/TopMenu/index.vue';
 import Navbar from './components/Navbar/index.vue';
 import TagsView from './components/TagsView/index.vue';
@@ -100,6 +111,7 @@ const watermarkText = computed(() => appStore.layoutSettings.watermarkText);
 
 // 布局模式判断
 const isTopMenu = computed(() => layoutMode.value === 'horizontal');
+const isMixLayout = computed(() => layoutMode.value === 'mix');
 
 const showSidebar = computed(() => layoutMode.value !== 'horizontal');
 
@@ -112,18 +124,37 @@ const sidebarStyle = computed(() => {
   } as const;
 });
 
+// 两列菜单侧边栏样式
+const mixSidebarStyle = computed(() => {
+  return {
+    width: '260px',
+    flex: '0 0 260px',
+  } as const;
+});
+
 // 头部样式
 const headerStyle = computed(() => {
   if (!fixedHeader.value) return {};
-  const width = showSidebar.value && !isCollapse.value 
-    ? `calc(100% - ${appStore.layoutSettings.sidebarWidth}px)` 
-    : '100%';
+  
+  // 两列菜单布局
+  if (isMixLayout.value) {
+    return {
+      left: '260px',
+      width: 'calc(100% - 260px)',
+    };
+  }
+  
+  // 垂直布局
+  if (showSidebar.value) {
+    return {
+      left: `${appStore.sidebarActualWidth}px`,
+      width: `calc(100% - ${appStore.sidebarActualWidth}px)`,
+    };
+  }
+  
   return {
-    width: isMobile.value ? '100%' : width,
-    // position: 'fixed' as const,
-    top: '0',
-    right: '0',
-    zIndex: '100',
+    left: '0',
+    width: '100%',
   };
 });
 
@@ -148,9 +179,11 @@ const layoutClasses = computed(() => {
 
 // 布局样式
 const layoutStyles = computed(() => {
+  const sidebarWidth = isMixLayout.value ? '260px' : `${appStore.sidebarActualWidth}px`;
   return {
     '--sidebar-width': `${appStore.layoutSettings.sidebarWidth}px`,
     '--sidebar-collapsed-width': `${appStore.layoutSettings.sidebarCollapsedWidth}px`,
+    '--sidebar-actual-width': sidebarWidth,
     '--primary-color': appStore.primaryColor,
   };
 });
@@ -236,8 +269,12 @@ onMounted(() => {
   z-index: 100;
 
   &.is-fixed {
+    position: fixed;
+    top: 0;
+    right: 0;
+
     & + .layout-content {
-      padding-top: 64px;
+      padding-top: 72px;
     }
   }
 }

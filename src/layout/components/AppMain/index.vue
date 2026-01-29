@@ -27,10 +27,7 @@ const cachedViews = computed(() => {
 <style lang="scss" scoped>
 .app-main-container {
   min-height: 100%;
-  padding: 16px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  padding: 12px;
 }
 
 // 页面切换动画

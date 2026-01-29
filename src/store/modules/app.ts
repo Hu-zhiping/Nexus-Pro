@@ -253,6 +253,9 @@ const useAppStore = defineStore("appStore", {
       document.documentElement.style.setProperty('--color-primary', color);
       // 生成不同深度的颜色
       document.documentElement.style.setProperty('--el-color-primary', color);
+      // 同步更新菜单激活颜色和背景
+      document.documentElement.style.setProperty('--color-sidebar-text-active', color);
+      document.documentElement.style.setProperty('--color-sidebar-active-bg', `${color}1a`); // 10% 透明度
     },
 
     applyDarkMode() {
@@ -303,6 +306,8 @@ const useAppStore = defineStore("appStore", {
     // 初始化
     init() {
       this.loadSettings();
+      // 应用主题色
+      this.applyThemeColor();
       // 监听窗口大小变化
       const handleResize = () => {
         const isMobile = window.innerWidth < 768;

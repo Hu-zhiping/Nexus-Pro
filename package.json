@@ -1,9 +1,14 @@
 {
-	"name": "hello-admin",
+	"name": "NexusPro",
 	"private": true,
 	"version": "0.0.0",
 	"eslintConfig": {
-		"extends": []
+		"extends": [
+			"eslint:recommended",
+			"plugin:vue/vue3-recommended",
+			"@vue/typescript/recommended",
+			"prettier"
+		]
 	},
 	"type": "module",
 	"scripts": {
@@ -17,28 +22,27 @@
 		"@element-plus/icons-vue": "^2.3.2",
 		"@fortawesome/fontawesome-free": "^7.0.0",
 		"@iconify/vue": "^5.0.0",
-		"@types/node": "^20.4.2",
 		"@vueuse/core": "^13.5.0",
-		"autoprefixer": "^10.4.15",
 		"axios": "^1.4.0",
 		"element-plus": "^2.10.6",
-		"eslint": "^9.17.0",
 		"nprogress": "^0.2.0",
 		"path-to-regexp": "^8.2.0",
 		"pinia": "^2.1.4",
 		"pinia-plugin-persistedstate": "^3.2.1",
-		"sass": "^1.63.6",
 		"screenfull": "^6.0.2",
 		"vue": "^3.3.4",
 		"vue-router": "^4.2.4"
 	},
 	"devDependencies": {
 		"@iconify-json/ri": "^1.2.7",
+		"@types/node": "^20.4.2",
 		"@types/nprogress": "^0.2.3",
 		"@typescript-eslint/eslint-plugin": "^6.2.0",
 		"@typescript-eslint/parser": "^6.2.0",
 		"@vitejs/plugin-vue": "^4.2.3",
+		"autoprefixer": "^10.4.15",
 		"consola": "^3.2.3",
+		"eslint": "^9.17.0",
 		"eslint-config-prettier": "^8.9.0",
 		"eslint-plugin-prettier": "^5.0.0",
 		"eslint-plugin-vue": "^9.15.1",
@@ -46,6 +50,7 @@
 		"mockjs": "^1.1.0",
 		"postcss": "^8.4.27",
 		"prettier": "^3.0.0",
+		"sass": "^1.63.6",
 		"typescript": "^5.0.2",
 		"unplugin-auto-import": "^0.16.6",
 		"unplugin-icons": "^23.0.1",
