@@ -4,36 +4,29 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "skipLibCheck": true,
-    /* Bundler mode */
-    "moduleResolution": "bundler",
+    /* Vite 推荐 */
+    "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
+    /* Vue JSX */
     "jsx": "preserve",
-    /* Linting */
+    /* 类型检查 */
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "skipLibCheck": true,
+    /* 代码质量 */
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": ".",
     "paths": {
-      "@": ["src"],
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
-    "allowSyntheticDefaultImports": true // 允许默认导入
+    /* 兼容 */
+    "allowSyntheticDefaultImports": true,
+    "types": ["node"]
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "src/types/**/*.d.ts",
-    "*/**/*.d.ts",
-    "auto-imports.d.ts",
-    "components.d.ts"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.d.ts", "auto-imports.d.ts", "components.d.ts"],
   "references": [
     {
       "path": "./tsconfig.node.json"

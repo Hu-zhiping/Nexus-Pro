@@ -1,72 +1,72 @@
-import http from "@/utils/request.ts";
+import http from "@/utils/request";
+import type { MenuItem } from "@/types/menu";
+import type { UserProfile } from "@/store/modules/user";
 
-export const doLogin = (data: any) => {
-	return http.post("/api/admin/login", data);
+export interface LoginParams {
+  username: string;
+  password: string;
+}
+
+export interface LoginResult {
+  token: string;
+  userInfo: UserProfile;
+}
+
+export interface UserQueryParams {
+  page?: number;
+  pageSize?: number;
+  keyword?: string;
+  role?: string;
+  status?: number;
+}
+
+export interface UserItem {
+  id: string | number;
+  username: string;
+  nickname: string;
+  email: string;
+  phone: string;
+  role: string;
+  dept: string;
+  status: number;
+  createTime?: string;
+}
+
+export interface PageResult<T> {
+  list: T[];
+  total: number;
+}
+
+export interface ApiResult<T = unknown> {
+  code: number;
+  msg: string;
+  data: T;
+}
+
+export const doLogin = (data: LoginParams) => {
+  return http.post<ApiResult<LoginResult>>("/api/admin/login", data);
 };
 
-// 菜单
 export const getMenuList = () => {
-	return http.post("/api/admin/getMenuList");
+  return http.post<ApiResult<MenuItem[]>>("/api/admin/getMenuList");
 };
 
-export const setToken = (token: string) => {
-	localStorage.setItem("access_token", token);
+export const getUserList = (params?: UserQueryParams) => {
+  return http.get<ApiResult<PageResult<UserItem>>>("/api/admin/getUserList", params as Record<string, unknown>);
 };
 
-export const getToken = () => {
-	return localStorage.getItem("access_token");
+export const createUser = (data: Partial<UserItem>) => {
+  return http.post<ApiResult<UserItem>>("/user", data);
 };
 
+export const updateUser = (id: string | number, data: Partial<UserItem>) => {
+  return http.put<ApiResult<UserItem>>(`/user/${id}`, data);
+};
 
+export const deleteUser = (id: string | number) => {
+  return http.delete<ApiResult<void>>(`/user/${id}`);
+};
 
-// 获取用户列表 - 方式1：分别传递body和query参数
-export const getUserList = (bodyData: any, queryParams?: any) => {
-	return http.post("/user/list", bodyData, { params: queryParams });
-}
-
-// 获取用户列表 - 方式3：固定URL参数
-export const getUserListWithFixedParams = (
-	param1: string,
-	param2: string,
-	bodyData: any,
-	queryParams?: any
-) => {
-	return http.post(`/user/list/${param1}/${param2}`, bodyData, { params: queryParams });
-}
-
-// 获取用户列表 - 方式2：传递完整配置对象
-export const getUserListAdvanced = (config: {
-	body?: any,
-	query?: any,
-	urlParams?: string[] // 如果需要在URL路径中插入参数
-}) => {
-	const { body, query, urlParams } = config;
-	let url = "/user/list";
-
-	// 如果需要在URL路径中添加参数，比如 /user/list/1/active
-	if (urlParams && urlParams.length > 0) {
-		url += "/" + urlParams.join("/");
-	}
-
-	return http.post(url, body, { params: query });
-}
-
-// 创建用户
-export const createUser = (data: any) => {
-	return http.post("/user", data);
-}
-
-// 更新用户
-export const updateUser = (id: string, data: any) => {
-	return http.put(`/user/${id}`, data);
-}
-
-// 删除用户
-export const deleteUser = (id: string) => {
-	return http.delete(`/user/${id}`);
-}
-
-// 更新用户状态
-export const updateUserStatus = (id: string, status: number) => {
-	return http.put(`/user/${id}/status`, { status });
-}
+export const updateUserStatus = (id: string | number, status: number) => {
+  return http.put<ApiResult<void>>(`/user/${id}/status`, { status });
+};

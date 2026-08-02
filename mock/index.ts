@@ -15,8 +15,8 @@ const generateMenuList = () => {
         title: "首页",
         icon: "ri:dashboard-line",
         hidden: false,
-        affix: true
-      }
+        affix: true,
+      },
     },
     {
       id: "2",
@@ -27,7 +27,7 @@ const generateMenuList = () => {
       meta: {
         title: "系统管理",
         icon: "ri:settings-3-line",
-        hidden: false
+        hidden: false,
       },
       children: [
         {
@@ -38,8 +38,8 @@ const generateMenuList = () => {
           meta: {
             title: "用户管理",
             icon: "ri:user-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "2-2",
@@ -49,8 +49,8 @@ const generateMenuList = () => {
           meta: {
             title: "角色管理",
             icon: "ri:shield-user-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "2-3",
@@ -60,8 +60,8 @@ const generateMenuList = () => {
           meta: {
             title: "菜单管理",
             icon: "ri:menu-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "2-4",
@@ -71,10 +71,10 @@ const generateMenuList = () => {
           meta: {
             title: "部门管理",
             icon: "ri:organization-chart",
-            hidden: false
-          }
-        }
-      ]
+            hidden: false,
+          },
+        },
+      ],
     },
     {
       id: "3",
@@ -85,7 +85,7 @@ const generateMenuList = () => {
       meta: {
         title: "数据报表",
         icon: "ri:bar-chart-box-line",
-        hidden: false
+        hidden: false,
       },
       children: [
         {
@@ -96,8 +96,8 @@ const generateMenuList = () => {
           meta: {
             title: "数据报表",
             icon: "ri:line-chart-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "3-2",
@@ -107,10 +107,10 @@ const generateMenuList = () => {
           meta: {
             title: "数据分析",
             icon: "ri:pie-chart-line",
-            hidden: false
-          }
-        }
-      ]
+            hidden: false,
+          },
+        },
+      ],
     },
     {
       id: "4",
@@ -121,7 +121,7 @@ const generateMenuList = () => {
       meta: {
         title: "组件示例",
         icon: "ri:apps-line",
-        hidden: false
+        hidden: false,
       },
       children: [
         {
@@ -132,8 +132,8 @@ const generateMenuList = () => {
           meta: {
             title: "高级表格",
             icon: "ri:table-2",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "4-2",
@@ -143,8 +143,8 @@ const generateMenuList = () => {
           meta: {
             title: "表单组件",
             icon: "ri:file-list-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "4-3",
@@ -154,10 +154,10 @@ const generateMenuList = () => {
           meta: {
             title: "富文本编辑器",
             icon: "ri:edit-line",
-            hidden: false
-          }
-        }
-      ]
+            hidden: false,
+          },
+        },
+      ],
     },
     {
       id: "5",
@@ -168,7 +168,7 @@ const generateMenuList = () => {
       meta: {
         title: "个人中心",
         icon: "ri:user-settings-line",
-        hidden: true
+        hidden: true,
       },
       children: [
         {
@@ -179,8 +179,8 @@ const generateMenuList = () => {
           meta: {
             title: "个人资料",
             icon: "ri:user-line",
-            hidden: false
-          }
+            hidden: false,
+          },
         },
         {
           id: "5-2",
@@ -190,11 +190,11 @@ const generateMenuList = () => {
           meta: {
             title: "个人设置",
             icon: "ri:settings-4-line",
-            hidden: false
-          }
-        }
-      ]
-    }
+            hidden: false,
+          },
+        },
+      ],
+    },
   ];
 };
 
@@ -204,18 +204,18 @@ const generateUserList = () => {
     "list|20": [
       {
         "id|+1": 1,
-        "username": "@cname",
-        "nickname": "@cname",
-        "email": "@email",
-        "phone": /^1[3-9]\d{9}$/,
-        "avatar": "",
+        username: "@cname",
+        nickname: "@cname",
+        email: "@email",
+        phone: /^1[3-9]\d{9}$/,
+        avatar: "",
         "status|1": [0, 1],
         "role|1": ["超级管理员", "管理员", "普通用户"],
         "dept|1": ["技术部", "产品部", "运营部", "市场部", "人事部"],
-        "createTime": "@datetime",
-        "updateTime": "@datetime"
-      }
-    ]
+        createTime: "@datetime",
+        updateTime: "@datetime",
+      },
+    ],
   });
 };
 
@@ -228,7 +228,7 @@ const generateNotifications = () => {
       title: "欢迎使用 Vue Admin Pro",
       desc: "这是一个功能强大的后台管理系统",
       time: "5分钟前",
-      read: false
+      read: false,
     },
     {
       id: 2,
@@ -236,7 +236,7 @@ const generateNotifications = () => {
       title: "系统升级完成",
       desc: "系统已升级至 v2.0 版本",
       time: "1小时前",
-      read: false
+      read: false,
     },
     {
       id: 3,
@@ -244,7 +244,7 @@ const generateNotifications = () => {
       title: "密码即将过期",
       desc: "您的密码将在 7 天后过期",
       time: "2小时前",
-      read: true
+      read: true,
     },
     {
       id: 4,
@@ -252,8 +252,8 @@ const generateNotifications = () => {
       title: "登录异常提醒",
       desc: "检测到您的账号在异地登录",
       time: "昨天",
-      read: false
-    }
+      read: false,
+    },
   ];
 };
 
@@ -277,11 +277,11 @@ export default [
             email: "admin@example.com",
             phone: "13800138000",
             roles: ["admin"],
-            permissions: ["*"]
-          }
-        }
+            permissions: ["*"],
+          },
+        },
       };
-    }
+    },
   },
   // 获取用户信息
   {
@@ -302,10 +302,10 @@ export default [
           roles: ["admin"],
           permissions: ["*"],
           dept: "技术部",
-          position: "高级工程师"
-        }
+          position: "高级工程师",
+        },
       };
-    }
+    },
   },
   // 获取菜单列表
   {
@@ -316,9 +316,9 @@ export default [
       return {
         code: 200,
         message: "请求成功",
-        data: generateMenuList()
+        data: generateMenuList(),
       };
-    }
+    },
   },
   // 获取用户列表
   {
@@ -334,10 +334,10 @@ export default [
           list,
           total: list.length,
           page: 1,
-          pageSize: 20
-        }
+          pageSize: 20,
+        },
       };
-    }
+    },
   },
   // 获取通知消息
   {
@@ -350,10 +350,10 @@ export default [
         message: "请求成功",
         data: {
           list: generateNotifications(),
-          unreadCount: 3
-        }
+          unreadCount: 3,
+        },
       };
-    }
+    },
   },
   // 退出登录
   {
@@ -364,8 +364,8 @@ export default [
       return {
         code: 200,
         message: "退出成功",
-        data: null
+        data: null,
       };
-    }
-  }
+    },
+  },
 ] as MockMethod[];

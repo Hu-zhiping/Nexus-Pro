@@ -1,10 +1,19 @@
 <template>
   <div class="page-container">
+    <div class="page-header">
+      <div>
+        <h2 class="page-title">用户管理</h2>
+        <p class="page-desc">管理系统用户账号、角色与状态</p>
+      </div>
+      <div class="page-actions">
+        <el-button type="primary" :icon="Plus" @click="handleAdd">新增用户</el-button>
+      </div>
+    </div>
+
     <!-- 搜索区域 -->
     <el-card class="search-card" shadow="never">
       <div class="search-area">
         <div class="search-form-wrapper">
-          <!-- 始终显示的基础搜索条件 -->
           <div class="search-form-base">
             <el-input
               v-model="searchKey"
@@ -18,7 +27,6 @@
               </template>
             </el-input>
           </div>
-          <!-- 可展开/折叠的额外搜索条件 -->
           <el-collapse-transition>
             <div v-show="searchExpanded" class="search-form-extra">
               <el-select v-model="searchRole" placeholder="选择角色" clearable class="search-select">
@@ -45,7 +53,7 @@
           <el-button :icon="Search" type="primary" @click="handleSearch">搜索</el-button>
           <el-button :icon="RefreshRight" @click="handleReset">重置</el-button>
           <el-button link type="primary" class="expand-btn" @click="searchExpanded = !searchExpanded">
-            <span>{{ searchExpanded ? '收起' : '展开' }}</span>
+            <span>{{ searchExpanded ? "收起" : "展开" }}</span>
             <el-icon class="expand-icon" :class="{ 'is-expanded': searchExpanded }">
               <ArrowDown />
             </el-icon>
@@ -55,46 +63,32 @@
     </el-card>
 
     <!-- 数据展示区域 -->
-    <el-card class="table-card" shadow="never">
-      <template #header>
-        <div class="card-header">
-          <span class="title">用户列表</span>
-          <el-button type="primary" :icon="Plus" @click="handleAdd">新增用户</el-button>
-        </div>
-      </template>
-
-      <!-- 数据表格 -->
-      <el-table :data="userList" v-loading="loading" stripe>
-        <el-table-column type="index" width="60" label="序号" />
-        <el-table-column prop="username" label="用户名" min-width="120" />
-        <el-table-column prop="nickname" label="昵称" min-width="120" />
-        <el-table-column prop="email" label="邮箱" min-width="180" />
-        <el-table-column prop="phone" label="手机号" min-width="140" />
+    <el-card class="content-card" shadow="never">
+      <el-table v-loading="loading" :data="userList" border stripe row-key="id" empty-text="暂无数据">
+        <template #empty>
+          <el-empty description="暂无用户数据" />
+        </template>
+        <el-table-column prop="username" label="用户名" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="nickname" label="昵称" min-width="120" show-overflow-tooltip />
+        <el-table-column prop="email" label="邮箱" min-width="180" show-overflow-tooltip />
         <el-table-column prop="role" label="角色" min-width="120">
           <template #default="{ row }">
-            <el-tag :type="getRoleType(row.role)">{{ row.role }}</el-tag>
+            <el-tag :type="getRoleType(row.role)" size="small">{{ row.role }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="dept" label="部门" min-width="120" />
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
-            <el-switch
-              v-model="row.status"
-              :active-value="1"
-              :inactive-value="0"
-              @change="handleStatusChange(row)"
-            />
+            <el-switch v-model="row.status" :active-value="1" :inactive-value="0" @change="handleStatusChange(row as UserItem)" />
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button link type="primary" :icon="Edit" @click="handleEdit(row)">编辑</el-button>
-            <el-button link type="danger" :icon="Delete" @click="handleDelete(row)">删除</el-button>
+            <el-button link type="primary" size="small" @click="handleEdit(row as UserItem)">编辑</el-button>
+            <el-button link type="danger" size="small" @click="handleDelete(row as UserItem)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
       <div class="pagination-wrapper">
         <el-pagination
           v-model:current-page="page"
@@ -102,6 +96,7 @@
           :total="total"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
+          background
           @size-change="handleSizeChange"
           @current-change="handlePageChange"
         />
@@ -111,41 +106,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { ElMessage, ElMessageBox } from 'element-plus';
-import { Plus, Search, Edit, Delete, RefreshRight, ArrowDown } from '@element-plus/icons-vue';
-import { getUserList, deleteUser, updateUserStatus } from '@/api/user';
+import { ref, onMounted } from "vue";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { Plus, Search, RefreshRight, ArrowDown } from "@element-plus/icons-vue";
+import { getUserList, deleteUser, updateUserStatus } from "@/api/user";
+import type { UserItem } from "@/api/user";
 
 const loading = ref(false);
-const searchKey = ref('');
-const searchRole = ref('');
-const searchStatus = ref('');
-const searchDateRange = ref([]);
+const searchKey = ref("");
+const searchRole = ref("");
+const searchStatus = ref<number | "">("");
+const searchDateRange = ref<[string, string] | []>([]);
 const searchExpanded = ref(false);
-const userList = ref([]);
+const userList = ref<UserItem[]>([]);
 const page = ref(1);
 const pageSize = ref(10);
 const total = ref(0);
 
 // 获取角色标签类型
-const getRoleType = (role: string) => {
-  const types: Record<string, any> = {
-    '超级管理员': 'danger',
-    '管理员': 'warning',
-    '普通用户': 'info',
+const getRoleType = (role: string): "success" | "warning" | "info" | "danger" => {
+  const types: Record<string, "success" | "warning" | "info" | "danger"> = {
+    超级管理员: "danger",
+    管理员: "warning",
+    普通用户: "info",
   };
-  return types[role] || 'info';
+  return types[role] || "info";
 };
 
 // 获取用户列表
 const fetchUserList = async () => {
   loading.value = true;
   try {
-    const res: any = await getUserList({ page: page.value, pageSize: pageSize.value });
-    userList.value = res.data?.list || [];
-    total.value = res.data?.total || 0;
+    const res = await getUserList({ page: page.value, pageSize: pageSize.value });
+    userList.value = res?.data?.list || [];
+    total.value = res?.data?.total || 0;
   } catch (error) {
-    console.error('获取用户列表失败:', error);
+    console.error("获取用户列表失败:", error);
   } finally {
     loading.value = false;
   }
@@ -159,9 +155,9 @@ const handleSearch = () => {
 
 // 重置
 const handleReset = () => {
-  searchKey.value = '';
-  searchRole.value = '';
-  searchStatus.value = '';
+  searchKey.value = "";
+  searchRole.value = "";
+  searchStatus.value = "";
   searchDateRange.value = [];
   page.value = 1;
   fetchUserList();
@@ -169,39 +165,39 @@ const handleReset = () => {
 
 // 新增
 const handleAdd = () => {
-  ElMessage.info('打开新增用户对话框');
+  ElMessage.info("打开新增用户对话框");
 };
 
 // 编辑
-const handleEdit = (row: any) => {
+const handleEdit = (row: UserItem) => {
   ElMessage.info(`编辑用户: ${row.username}`);
 };
 
 // 删除
-const handleDelete = (row: any) => {
-  ElMessageBox.confirm(`确定要删除用户 "${row.username}" 吗？`, '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning',
+const handleDelete = (row: UserItem) => {
+  ElMessageBox.confirm(`确定要删除用户 "${row.username}" 吗？`, "提示", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning",
   }).then(async () => {
     try {
       await deleteUser(row.id);
-      ElMessage.success('删除成功');
+      ElMessage.success("删除成功");
       fetchUserList();
     } catch (error) {
-      console.error('删除失败:', error);
+      console.error("删除失败:", error);
     }
   });
 };
 
 // 状态变更
-const handleStatusChange = async (row: any) => {
+const handleStatusChange = async (row: UserItem) => {
   try {
     await updateUserStatus(row.id, row.status);
-    ElMessage.success('状态更新成功');
+    ElMessage.success("状态更新成功");
   } catch (error) {
     row.status = row.status === 1 ? 0 : 1;
-    console.error('状态更新失败:', error);
+    console.error("状态更新失败:", error);
   }
 };
 
@@ -222,14 +218,7 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.page-container {
-  padding: 0;
-}
-
-// 搜索区域卡片 - 圆角增大
 .search-card {
-  margin-bottom: 16px;
-  border-radius: 12px;
   :deep(.el-card__body) {
     padding: 16px 20px;
   }
@@ -288,33 +277,5 @@ onMounted(() => {
       }
     }
   }
-}
-
-// 表格区域卡片 - 圆角增大
-.table-card {
-  min-height: calc(100vh - 280px);
-  border-radius: 12px;
-  :deep(.el-card__header) {
-    padding: 12px 20px;
-  }
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  .title {
-    font-size: 16px;
-    font-weight: 600;
-  }
-}
-
-.pagination-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 20px;
-  padding-top: 20px;
-  border-top: 1px solid var(--el-border-color-lighter);
 }
 </style>

@@ -1,76 +1,50 @@
-import router from "@/router";
-import { ElMessage } from 'element-plus';
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { ElMessage } from "element-plus";
+import { getToken } from "./auth";
 
-interface ApiConfig {
-	baseURL: string;
-	timeout: number;
-}
+const instance: AxiosInstance = axios.create({
+  baseURL: import.meta.env.VITE_APP_BASE_API,
+  timeout: 10000,
+});
 
-const config: ApiConfig = {
-	baseURL: import.meta.env.VITE_APP_BASE_API,
-	timeout: 10000
+instance.interceptors.request.use(
+  (config: InternalAxiosRequestConfig) => {
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
+instance.interceptors.response.use(
+  (response: AxiosResponse) => {
+    const { code, msg } = response.data;
+    if (code === 200) {
+      return response.data;
+    }
+    if (code === 401) {
+      window.location.href = "/#/login?expired=1";
+    }
+    ElMessage.error(msg || "请求失败");
+    return Promise.reject(new Error(msg || "请求失败"));
+  },
+  (error) => {
+    ElMessage.error(error.message || "网络错误");
+    return Promise.reject(error);
+  },
+);
+
+const http = {
+  get: <T = unknown>(url: string, params?: Record<string, unknown>, config?: AxiosRequestConfig) =>
+    instance.get<T, T>(url, { params, ...config }),
+
+  post: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) => instance.post<T, T>(url, data, config),
+
+  put: <T = unknown>(url: string, data?: unknown, config?: AxiosRequestConfig) => instance.put<T, T>(url, data, config),
+
+  delete: <T = unknown>(url: string, config?: AxiosRequestConfig) => instance.delete<T, T>(url, config),
 };
 
-class Http {
-	private instance: AxiosInstance;
-
-	constructor(config: ApiConfig) {
-		this.instance = axios.create(config);
-
-		this.instance.interceptors.request.use(
-			(config: InternalAxiosRequestConfig) => {
-				const token = localStorage.getItem("access_token");
-				if (token) {
-					config.headers["Authorization"] = "Bearer " + token;
-				}
-				return config;
-			},
-			(error: any) => {
-				return Promise.reject(error);
-			}
-		);
-
-		this.instance.interceptors.response.use(
-			(response: AxiosResponse<any, any>) => {
-				const { code, msg } = response.data;
-				if (code && code == 200) {
-					return response.data;
-				}
-				// token过期
-				if (code === 401) {
-					router.push("/login?expired=1");
-				}
-				ElMessage.error(msg || "系统错误");
-				return Promise.reject(new Error(msg || "系统错误"));
-			},
-			(error: any) => {
-				ElMessage.error(error.msg || "系统错误");
-				return Promise.reject(error);
-			}
-		);
-	}
-
-	// 封装 GET 请求，包含查询参数
-	get(url: string, params?: Record<string, any>, config?: AxiosRequestConfig) {
-		return this.instance.get(url, { params, ...config });
-	}
-
-	// 封装 POST 请求
-	post(url: string, data?: any, config?: AxiosRequestConfig) {
-		return this.instance.post(url, data, config);
-	}
-
-	// 封装 PUT 请求
-	put(url: string, data?: any, config?: AxiosRequestConfig) {
-		return this.instance.put(url, data, config);
-	}
-
-	// 封装 DELETE 请求
-	delete(url: string, config?: AxiosRequestConfig) {
-		return this.instance.delete(url, config);
-	}
-}
-
-const http: Http = new Http(config);
 export default http;

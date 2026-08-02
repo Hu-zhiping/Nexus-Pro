@@ -10,12 +10,7 @@
         <el-tab-pane label="基本设置" name="basic">
           <el-form :model="basicForm" label-width="100px" class="settings-form">
             <el-form-item label="头像">
-              <el-upload
-                class="avatar-uploader"
-                action="#"
-                :show-file-list="false"
-                :before-upload="beforeAvatarUpload"
-              >
+              <el-upload class="avatar-uploader" action="#" :show-file-list="false" :before-upload="beforeAvatarUpload">
                 <el-avatar v-if="basicForm.avatar" :size="100" :src="basicForm.avatar" />
                 <el-avatar v-else :size="100" :icon="UserFilled" />
                 <div class="upload-tip">点击更换头像</div>
@@ -39,13 +34,7 @@
             </el-form-item>
 
             <el-form-item label="个人简介">
-              <el-input
-                v-model="basicForm.intro"
-                type="textarea"
-                :rows="4"
-                placeholder="请输入个人简介"
-                style="width: 500px"
-              />
+              <el-input v-model="basicForm.intro" type="textarea" :rows="4" placeholder="请输入个人简介" style="width: 500px" />
             </el-form-item>
 
             <el-form-item>
@@ -83,11 +72,7 @@
             </el-form-item>
 
             <el-form-item label="详细地址">
-              <el-input
-                v-model="contactForm.address"
-                placeholder="请输入详细地址"
-                style="width: 500px"
-              />
+              <el-input v-model="contactForm.address" placeholder="请输入详细地址" style="width: 500px" />
             </el-form-item>
 
             <el-form-item>
@@ -172,34 +157,34 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
-import { ElMessage } from 'element-plus';
-import { UserFilled } from '@element-plus/icons-vue';
+import { reactive, ref } from "vue";
+import { ElMessage } from "element-plus";
+import { UserFilled } from "@element-plus/icons-vue";
 
-const activeTab = ref('basic');
+const activeTab = ref("basic");
 
 // 基本设置表单
 const basicForm = reactive({
-  avatar: '',
-  nickname: '管理员',
-  username: 'admin',
-  gender: 'male',
-  intro: '',
+  avatar: "",
+  nickname: "管理员",
+  username: "admin",
+  gender: "male",
+  intro: "",
 });
 
 // 联系信息表单
 const contactForm = reactive({
-  email: 'admin@example.com',
-  phone: '13800138000',
+  email: "admin@example.com",
+  phone: "13800138000",
   region: [],
-  address: '',
+  address: "",
 });
 
 // 密码表单
 const passwordForm = reactive({
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: '',
+  oldPassword: "",
+  newPassword: "",
+  confirmPassword: "",
 });
 
 // 通知设置
@@ -213,37 +198,43 @@ const notificationForm = reactive({
 // 地区选项
 const regionOptions = [
   {
-    value: 'beijing',
-    label: '北京市',
-    children: [{ value: 'chaoyang', label: '朝阳区' }, { value: 'haidian', label: '海淀区' }],
+    value: "beijing",
+    label: "北京市",
+    children: [
+      { value: "chaoyang", label: "朝阳区" },
+      { value: "haidian", label: "海淀区" },
+    ],
   },
   {
-    value: 'shanghai',
-    label: '上海市',
-    children: [{ value: 'pudong', label: '浦东新区' }, { value: 'huangpu', label: '黄浦区' }],
+    value: "shanghai",
+    label: "上海市",
+    children: [
+      { value: "pudong", label: "浦东新区" },
+      { value: "huangpu", label: "黄浦区" },
+    ],
   },
 ];
 
 const beforeAvatarUpload = (file: File) => {
-  const isJPG = file.type === 'image/jpeg';
-  const isPNG = file.type === 'image/png';
+  const isJPG = file.type === "image/jpeg";
+  const isPNG = file.type === "image/png";
   const isLt2M = file.size / 1024 / 1024 < 2;
 
   if (!isJPG && !isPNG) {
-    ElMessage.error('只支持 JPG 或 PNG 格式的图片!');
+    ElMessage.error("只支持 JPG 或 PNG 格式的图片!");
   }
   if (!isLt2M) {
-    ElMessage.error('图片大小不能超过 2MB!');
+    ElMessage.error("图片大小不能超过 2MB!");
   }
   return false;
 };
 
-const handleSaveBasic = () => ElMessage.success('基本信息已保存');
-const handleSaveContact = () => ElMessage.success('联系信息已保存');
-const handleChangePassword = () => ElMessage.success('密码已修改');
-const handleSaveNotification = () => ElMessage.success('通知设置已保存');
-const handleVerifyEmail = () => ElMessage.info('验证邮件已发送');
-const handleVerifyPhone = () => ElMessage.info('短信验证码已发送');
+const handleSaveBasic = () => ElMessage.success("基本信息已保存");
+const handleSaveContact = () => ElMessage.success("联系信息已保存");
+const handleChangePassword = () => ElMessage.success("密码已修改");
+const handleSaveNotification = () => ElMessage.success("通知设置已保存");
+const handleVerifyEmail = () => ElMessage.info("验证邮件已发送");
+const handleVerifyPhone = () => ElMessage.info("短信验证码已发送");
 </script>
 
 <style scoped lang="scss">

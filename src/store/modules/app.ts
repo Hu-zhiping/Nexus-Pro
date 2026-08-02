@@ -1,8 +1,9 @@
 import { defineStore } from "pinia";
 
-export type ThemeType = 'blue' | 'purple' | 'green' | 'orange' | 'red';
-export type LayoutMode = 'vertical' | 'horizontal' | 'mix';
-export type Language = 'zh-CN' | 'en';
+export type ThemeType = "teal" | "indigo" | "violet" | "rose" | "amber";
+export type LayoutMode = "vertical";
+export type Language = "zh-CN" | "en";
+export type SidebarTheme = "dark" | "light";
 
 export interface Tab {
   title: string;
@@ -13,317 +14,252 @@ export interface Tab {
 }
 
 export interface LayoutSettings {
-  // 布局模式
   layoutMode: LayoutMode;
-  // 侧边栏
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   sidebarCollapsedWidth: number;
-  // 标签页
   showTagsView: boolean;
-  tagsViewHeight: number;
-  // 面包屑
   showBreadcrumb: boolean;
-  // 页脚
   showFooter: boolean;
-  // 固定头部
   fixedHeader: boolean;
-  // 主题
   theme: ThemeType;
-  // 暗色模式
+  sidebarTheme: SidebarTheme;
   isDark: boolean;
-  // 语言
   language: Language;
-  // 水印
   showWatermark: boolean;
   watermarkText: string;
-  // 灰色模式
   grayMode: boolean;
-  // 色弱模式
   colorWeak: boolean;
 }
 
-// 主题色配置 - 现代渐变配色
+/* 主题色映射（企业级深饱和色板） */
 export const themeColors: Record<ThemeType, string> = {
-  blue: '#3b82f6',      // 科技蓝
-  purple: '#8b5cf6',    // 紫罗兰
-  green: '#10b981',     // 翡翠绿
-  orange: '#f97316',    // 活力橙
-  red: '#ef4444',       // 玫瑰红
+  indigo: "#165dff", // 深蓝（Arco 蓝，与 --color-primary 一致）
+  teal: "#00a870", // 翠绿（TDesign 翡翠绿）
+  violet: "#722ed1", // 紫罗兰（Ant 深紫）
+  rose: "#f53f3f", // 绯红（Arco 红，与 --color-danger 一致）
+  amber: "#fa8c16", // 琥珀（Ant 金橙）
 };
 
 const defaultSettings: LayoutSettings = {
-  layoutMode: 'vertical',
+  layoutMode: "vertical",
   sidebarCollapsed: false,
-  sidebarWidth: 220,
+  sidebarWidth: 230,
   sidebarCollapsedWidth: 64,
   showTagsView: true,
-  tagsViewHeight: 40,
   showBreadcrumb: true,
   showFooter: false,
   fixedHeader: true,
-  theme: 'blue',
+  theme: "indigo",
+  sidebarTheme: "dark",
   isDark: false,
-  language: 'zh-CN',
+  language: "zh-CN",
   showWatermark: false,
-  watermarkText: 'Vue Admin',
+  watermarkText: "Nexus Pro",
   grayMode: false,
   colorWeak: false,
 };
 
 const useAppStore = defineStore("appStore", {
   state: () => ({
-    // 侧边栏状态
     isCollapse: false,
-    // 设置面板显示状态
     showSettings: false,
-    // 移动端菜单显示状态
-    mobileMenuVisible: false,
-    // 标签页
     tabs: [] as Tab[],
-    // 布局设置
-    layoutSettings: { ...defaultSettings } as LayoutSettings,
+    layoutSettings: { ...defaultSettings },
   }),
 
   getters: {
-    // 获取当前激活的标签页
-    activeTab(): Tab | undefined {
-      return this.tabs.find(tab => tab.path === window.location.pathname);
-    },
-    // 当前主题色
     primaryColor(): string {
       return themeColors[this.layoutSettings.theme];
     },
-    // 侧边栏实际宽度
+
     sidebarActualWidth(): number {
-      return this.isCollapse 
-        ? this.layoutSettings.sidebarCollapsedWidth 
-        : this.layoutSettings.sidebarWidth;
+      return this.isCollapse ? this.layoutSettings.sidebarCollapsedWidth : this.layoutSettings.sidebarWidth;
     },
   },
 
   actions: {
-    // 切换侧边栏折叠状态
     toggleSidebar() {
       this.isCollapse = !this.isCollapse;
     },
 
-    // 设置侧边栏折叠状态
     setSidebarCollapsed(collapsed: boolean) {
       this.isCollapse = collapsed;
     },
 
-    // 打开设置面板
     openSettings() {
       this.showSettings = true;
     },
 
-    // 关闭设置面板
     closeSettings() {
       this.showSettings = false;
     },
 
-    // 切换移动端菜单
-    toggleMobileMenu() {
-      this.mobileMenuVisible = !this.mobileMenuVisible;
-    },
-
-    // ========== 标签页操作 ==========
+    // Tabs
     addTab(tab: Tab) {
-      if (!tab.path || tab.path === '/') return;
-      if (!this.tabs.some(t => t.path === tab.path)) {
+      if (!tab.path || tab.path === "/") return;
+      if (!this.tabs.some((t) => t.path === tab.path)) {
         this.tabs.push(tab);
       }
     },
 
     removeTab(path: string) {
-      const index = this.tabs.findIndex(t => t.path === path);
-      if (index !== -1) {
-        this.tabs.splice(index, 1);
-      }
+      this.tabs = this.tabs.filter((t) => t.path !== path);
     },
 
     closeOtherTabs(path: string) {
-      this.tabs = this.tabs.filter(tab => 
-        tab.path === path || tab.path === '/dashboard'
-      );
+      this.tabs = this.tabs.filter((tab) => tab.path === path || tab.path === "/dashboard");
     },
 
     closeAllTabs() {
-      this.tabs = this.tabs.filter(tab => tab.path === '/dashboard');
+      this.tabs = this.tabs.filter((tab) => tab.path === "/dashboard");
     },
 
     closeLeftTabs(path: string) {
-      const index = this.tabs.findIndex(t => t.path === path);
+      const index = this.tabs.findIndex((t) => t.path === path);
       if (index > 0) {
         this.tabs = this.tabs.slice(index);
       }
     },
 
     closeRightTabs(path: string) {
-      const index = this.tabs.findIndex(t => t.path === path);
-      if (index !== -1 && index < this.tabs.length - 1) {
+      const index = this.tabs.findIndex((t) => t.path === path);
+      if (index !== -1) {
         this.tabs = this.tabs.slice(0, index + 1);
       }
     },
 
-    // ========== 布局设置 ==========
-    updateLayoutSettings(settings: Partial<LayoutSettings>) {
-      this.layoutSettings = {
-        ...this.layoutSettings,
-        ...settings,
-      };
-      this.applySettings();
-    },
-
-    // 切换布局模式
-    setLayoutMode(mode: LayoutMode) {
-      this.layoutSettings.layoutMode = mode;
-      this.applySettings();
-    },
-
-    // 切换主题
     setTheme(theme: ThemeType) {
       this.layoutSettings.theme = theme;
       this.applyThemeColor();
     },
 
-    // 切换暗色模式
+    setSidebarTheme(theme: SidebarTheme) {
+      this.layoutSettings.sidebarTheme = theme;
+    },
+
     toggleDarkMode(isDark?: boolean) {
       this.layoutSettings.isDark = isDark ?? !this.layoutSettings.isDark;
       this.applyDarkMode();
     },
 
-    // 切换标签页显示
     toggleTagsView(show: boolean) {
       this.layoutSettings.showTagsView = show;
     },
 
-    // 切换面包屑显示
     toggleBreadcrumb(show: boolean) {
       this.layoutSettings.showBreadcrumb = show;
     },
 
-    // 切换页脚显示
     toggleFooter(show: boolean) {
       this.layoutSettings.showFooter = show;
     },
 
-    // 切换水印
     toggleWatermark(show: boolean) {
       this.layoutSettings.showWatermark = show;
     },
 
-    // 切换灰色模式
     toggleGrayMode(enable: boolean) {
       this.layoutSettings.grayMode = enable;
-      this.applyGrayMode();
+      this.applyFilter();
     },
 
-    // 切换色弱模式
     toggleColorWeak(enable: boolean) {
       this.layoutSettings.colorWeak = enable;
-      this.applyColorWeak();
+      this.applyFilter();
     },
 
-    // 设置语言
     setLanguage(lang: Language) {
       this.layoutSettings.language = lang;
-      // 可以在这里添加 i18n 切换逻辑
     },
 
-    // 重置所有设置
+    updateLayoutSettings(settings: Partial<LayoutSettings>) {
+      this.layoutSettings = { ...this.layoutSettings, ...settings };
+    },
+
     resetSettings() {
       this.layoutSettings = { ...defaultSettings };
       this.isCollapse = false;
       this.applySettings();
     },
 
-    // ========== 应用设置 ==========
-    applySettings() {
-      this.applyThemeColor();
-      this.applyDarkMode();
-      this.applyGrayMode();
-      this.applyColorWeak();
-      this.saveSettings();
-    },
-
+    // Apply Settings
     applyThemeColor() {
       const color = themeColors[this.layoutSettings.theme];
-      document.documentElement.style.setProperty('--color-primary', color);
-      // 生成不同深度的颜色
-      document.documentElement.style.setProperty('--el-color-primary', color);
-      // 同步更新菜单激活颜色和背景
-      document.documentElement.style.setProperty('--color-sidebar-text-active', color);
-      document.documentElement.style.setProperty('--color-sidebar-active-bg', `${color}1a`); // 10% 透明度
+      const root = document.documentElement;
+
+      // 计算主色的 RGB 分量
+      const hex = color.replace("#", "");
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+
+      // 亮色变体（与白色混合）
+      const lighten = (amount: number) => {
+        const lr = Math.round(r + (255 - r) * amount);
+        const lg = Math.round(g + (255 - g) * amount);
+        const lb = Math.round(b + (255 - b) * amount);
+        return `#${lr.toString(16).padStart(2, "0")}${lg.toString(16).padStart(2, "0")}${lb.toString(16).padStart(2, "0")}`;
+      };
+
+      // 暗色变体
+      const darken = (amount: number) => {
+        const dr = Math.round(r * (1 - amount));
+        const dg = Math.round(g * (1 - amount));
+        const db = Math.round(b * (1 - amount));
+        return `#${dr.toString(16).padStart(2, "0")}${dg.toString(16).padStart(2, "0")}${db.toString(16).padStart(2, "0")}`;
+      };
+
+      // 设置主色变量
+      root.style.setProperty("--main-color", color);
+      root.style.setProperty("--el-color-primary", color);
+
+      // 同步自定义 Token（侧边栏激活态、Logo、面包屑、链接等）
+      root.style.setProperty("--color-primary", color);
+      root.style.setProperty("--color-primary-hover", lighten(0.2));
+      root.style.setProperty("--color-primary-active", darken(0.2));
+
+      // 生成 EP light-1 到 light-9 色阶
+      for (let i = 1; i <= 9; i++) {
+        root.style.setProperty(`--el-color-primary-light-${i}`, lighten(i / 10));
+      }
+      root.style.setProperty("--el-color-primary-dark-2", darken(0.2));
     },
 
     applyDarkMode() {
-      if (this.layoutSettings.isDark) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle("dark", this.layoutSettings.isDark);
     },
 
-    applyGrayMode() {
-      const html = document.documentElement;
-      if (this.layoutSettings.grayMode) {
-        html.style.filter = 'grayscale(100%)';
-      } else {
-        html.style.filter = '';
-      }
+    applyFilter() {
+      const { grayMode, colorWeak } = this.layoutSettings;
+      let filter = "";
+      if (grayMode) filter = "grayscale(100%)";
+      else if (colorWeak) filter = "invert(80%)";
+      document.documentElement.style.filter = filter;
     },
 
-    applyColorWeak() {
-      const html = document.documentElement;
-      if (this.layoutSettings.colorWeak) {
-        html.style.filter = 'invert(80%)';
-      } else if (!this.layoutSettings.grayMode) {
-        html.style.filter = '';
-      }
-    },
-
-    // 保存设置到 localStorage
-    saveSettings() {
-      localStorage.setItem('layout-settings', JSON.stringify(this.layoutSettings));
-    },
-
-    // 从 localStorage 加载设置
-    loadSettings() {
-      const saved = localStorage.getItem('layout-settings');
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          this.layoutSettings = { ...defaultSettings, ...parsed };
-          this.applySettings();
-        } catch (e) {
-          console.error('Failed to load settings:', e);
-        }
-      }
-    },
-
-    // 初始化
-    init() {
-      this.loadSettings();
-      // 应用主题色
+    applySettings() {
       this.applyThemeColor();
-      // 监听窗口大小变化
-      const handleResize = () => {
-        const isMobile = window.innerWidth < 768;
-        if (isMobile && !this.isCollapse) {
+      this.applyDarkMode();
+      this.applyFilter();
+    },
+
+    init() {
+      this.applySettings();
+      const checkMobile = () => {
+        if (window.innerWidth < 768 && !this.isCollapse) {
           this.isCollapse = true;
         }
       };
-      window.addEventListener('resize', handleResize);
-      handleResize();
+      window.addEventListener("resize", checkMobile);
+      checkMobile();
     },
   },
 
   persist: {
-    key: 'app-store',
-    paths: ['tabs', 'isCollapse', 'layoutSettings'],
-  }
+    key: "app-store",
+    pick: ["tabs", "isCollapse", "layoutSettings"],
+  },
 });
 
 export default useAppStore;

@@ -11,46 +11,26 @@
       <!-- 编辑器工具栏 -->
       <div class="editor-toolbar">
         <el-button-group>
-          <el-button size="small">
-            <SvgIcon name="ri:bold" size="14" style="margin-right: 4px" />加粗
-          </el-button>
-          <el-button size="small">
-            <SvgIcon name="ri:italic" size="14" style="margin-right: 4px" />斜体
-          </el-button>
-          <el-button size="small">
-            <SvgIcon name="ri:underline" size="14" style="margin-right: 4px" />下划线
-          </el-button>
+          <el-button size="small"> <SvgIcon name="ri:bold" size="14" style="margin-right: 4px" />加粗 </el-button>
+          <el-button size="small"> <SvgIcon name="ri:italic" size="14" style="margin-right: 4px" />斜体 </el-button>
+          <el-button size="small"> <SvgIcon name="ri:underline" size="14" style="margin-right: 4px" />下划线 </el-button>
         </el-button-group>
         <el-divider direction="vertical" />
         <el-button-group>
-          <el-button size="small">
-            <SvgIcon name="ri:align-left" size="14" style="margin-right: 4px" />左对齐
-          </el-button>
-          <el-button size="small">
-            <SvgIcon name="ri:align-center" size="14" style="margin-right: 4px" />居中
-          </el-button>
-          <el-button size="small">
-            <SvgIcon name="ri:align-right" size="14" style="margin-right: 4px" />右对齐
-          </el-button>
+          <el-button size="small"> <SvgIcon name="ri:align-left" size="14" style="margin-right: 4px" />左对齐 </el-button>
+          <el-button size="small"> <SvgIcon name="ri:align-center" size="14" style="margin-right: 4px" />居中 </el-button>
+          <el-button size="small"> <SvgIcon name="ri:align-right" size="14" style="margin-right: 4px" />右对齐 </el-button>
         </el-button-group>
         <el-divider direction="vertical" />
         <el-button-group>
-          <el-button size="small">
-            <SvgIcon name="ri:image-line" size="14" style="margin-right: 4px" />图片
-          </el-button>
-          <el-button size="small">
-            <SvgIcon name="ri:link" size="14" style="margin-right: 4px" />链接
-          </el-button>
+          <el-button size="small"> <SvgIcon name="ri:image-line" size="14" style="margin-right: 4px" />图片 </el-button>
+          <el-button size="small"> <SvgIcon name="ri:link" size="14" style="margin-right: 4px" />链接 </el-button>
         </el-button-group>
       </div>
 
       <!-- 编辑器区域 -->
       <div class="editor-wrapper">
-        <textarea
-          v-model="content"
-          class="editor-textarea"
-          placeholder="请输入内容..."
-        ></textarea>
+        <textarea v-model="content" class="editor-textarea" placeholder="请输入内容..."></textarea>
       </div>
 
       <!-- 预览区域 -->
@@ -61,9 +41,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
-import SvgIcon from '@/components/SvgIcon/index.vue';
+import { ref, computed } from "vue";
+import { ElMessage } from "element-plus";
+import SvgIcon from "@/components/svg-icon/index.vue";
 
 const content = ref(`<h2>欢迎使用富文本编辑器</h2>
 <p>这是一个简单的富文本编辑器示例。你可以在这里输入和编辑内容。</p>
@@ -77,8 +57,7 @@ const content = ref(`<h2>欢迎使用富文本编辑器</h2>
 const renderContent = computed(() => content.value);
 
 const handleSave = () => {
-  ElMessage.success('内容已保存');
-  console.log('保存的内容:', content.value);
+  ElMessage.success("内容已保存");
 };
 </script>
 
