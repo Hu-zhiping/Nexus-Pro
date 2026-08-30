@@ -1,39 +1,30 @@
 <template>
-  <el-sub-menu v-if="hasChildren" :index="item.path" popper-class="side-popper">
+  <!-- 有子菜单 -->
+  <el-sub-menu v-if="item.children?.length" :index="item.path">
     <template #title>
-      <SvgIcon v-if="item.meta?.icon" :name="item.meta.icon" size="18" />
-      <span>{{ item.meta?.title || item.name }}</span>
+      <SvgIcon v-if="item.icon" :name="item.icon" :size="18" />
+
+      <span>{{ item.title }}</span>
     </template>
 
-    <SidebarItem v-for="child in visibleChildren" :key="child.path" :item="child" />
+    <SidebarItem v-for="child in item.children" :key="child.path" :item="child" />
   </el-sub-menu>
 
-  <el-menu-item v-else :index="item.path" :disabled="item.meta?.disabled">
-    <SvgIcon v-if="item.meta?.icon" :name="item.meta.icon" size="18" />
+  <!-- 叶子菜单 -->
+  <el-menu-item v-else :index="item.path" :disabled="item.disabled">
+    <SvgIcon v-if="item.icon" :name="item.icon" :size="18" />
+
     <template #title>
-      <span>{{ item.meta?.title || item.name }}</span>
+      {{ item.title }}
     </template>
   </el-menu-item>
 </template>
 
-<script lang="ts">
-export default { name: "SidebarItem" };
-</script>
-
 <script setup lang="ts">
-import { computed } from "vue";
-import type { PropType } from "vue";
-import type { AppRouteRecordRaw } from "@/router";
-import SvgIcon from "@/components/svg-icon/index.vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
+import type { MenuVO } from "@/types/menu";
 
-const props = defineProps({
-  item: { type: Object as PropType<AppRouteRecordRaw>, required: true },
-});
-
-const visibleChildren = computed(() => {
-  if (!props.item.children) return [];
-  return props.item.children.filter((child) => !child.meta?.hidden);
-});
-
-const hasChildren = computed(() => visibleChildren.value.length > 0);
+defineProps<{
+  item: MenuVO;
+}>();
 </script>

@@ -122,7 +122,7 @@ import { reactive } from "vue";
 import { useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { Edit } from "@element-plus/icons-vue";
-import SvgIcon from "@/components/svg-icon/index.vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const router = useRouter();
 
@@ -173,12 +173,12 @@ const handleChangeEmail = () => ElMessage.info("更换邮箱");
       margin: 0 0 6px;
       font-size: 20px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: var(--color-text-primary);
     }
 
     .profile-role {
       margin: 0;
-      color: var(--text-secondary);
+      color: var(--color-text-secondary);
       font-size: 13px;
     }
   }
@@ -191,29 +191,29 @@ const handleChangeEmail = () => ElMessage.info("更换邮箱");
       align-items: center;
       gap: 12px;
       padding: 10px 0;
-      color: var(--text-primary);
+      color: var(--color-text-primary);
       font-size: 13px;
 
       .svg-icon {
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
         flex-shrink: 0;
       }
 
       &:not(:last-child) {
-        border-bottom: 1px solid var(--border-lighter);
+        border-bottom: 1px solid var(--color-border-light);
       }
     }
   }
 
   .profile-tags {
     padding: 16px 20px 24px;
-    border-top: 1px solid var(--border-lighter);
+    border-top: 1px solid var(--color-border-light);
 
     h4 {
       margin: 0 0 12px;
       font-size: 13px;
       font-weight: 500;
-      color: var(--text-primary);
+      color: var(--color-text-primary);
     }
 
     .tags-list {
@@ -243,7 +243,7 @@ const handleChangeEmail = () => ElMessage.info("更换邮箱");
     padding: 16px 0;
 
     &:not(:last-child) {
-      border-bottom: 1px solid var(--border-lighter);
+      border-bottom: 1px solid var(--color-border-light);
     }
 
     .security-info {
@@ -266,13 +266,13 @@ const handleChangeEmail = () => ElMessage.info("更换邮箱");
       .security-title {
         font-size: 14px;
         font-weight: 500;
-        color: var(--text-primary);
+        color: var(--color-text-primary);
         margin-bottom: 2px;
       }
 
       .security-desc {
         font-size: 12px;
-        color: var(--text-secondary);
+        color: var(--color-text-secondary);
       }
     }
   }

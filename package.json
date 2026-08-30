@@ -14,6 +14,7 @@
   "scripts": {
     "dev": "vite --open",
     "build": "vue-tsc && vite build",
+    "build:demo": "vue-tsc && vite build --mode demo",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "format": "prettier --write src/"
@@ -22,6 +23,7 @@
     "@iconify/vue": "^5.0.0",
     "@vueuse/core": "^13.5.0",
     "axios": "^1.19.0",
+    "echarts": "^6.1.0",
     "nprogress": "^0.2.0",
     "pinia": "^4.0.2",
     "pinia-plugin-persistedstate": "^4.7.1",

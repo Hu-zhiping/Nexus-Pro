@@ -1,191 +1,186 @@
 <template>
-  <div class="login-container">
-    <!-- 左侧品牌展示 -->
-    <aside class="login-banner">
-      <div class="brand">
-        <div class="brand-logo">
-          <SvgIcon name="ri:hexagon-fill" size="22" />
-        </div>
+  <div class="login-page">
+    <!-- 极光背景 -->
+    <div class="aurora" aria-hidden="true">
+      <span class="blob blob-a" />
+      <span class="blob blob-b" />
+      <span class="blob blob-c" />
+      <i class="aurora-grid" />
+    </div>
 
-        <div>
-          <div class="brand-name">Nexus Admin</div>
+    <!-- 顶部工具栏 -->
+    <header class="login-toolbar">
+      <el-dropdown trigger="click" @command="onLangChange">
+        <button type="button" class="toolbar-item">
+          <SvgIcon name="ri:global-line" :size="16" />
+          <span class="toolbar-label">{{ langLabel }}</span>
+          <SvgIcon name="ri:arrow-down-s-line" :size="14" />
+        </button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="zh-CN">简体中文</el-dropdown-item>
+            <el-dropdown-item command="en">English</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
 
-          <div class="brand-sub">Enterprise Management Platform</div>
-        </div>
-      </div>
+      <button type="button" class="toolbar-item" @click="onToggleTheme">
+        <SvgIcon :name="isDark ? 'ri:sun-line' : 'ri:moon-line'" :size="16" />
+        <span class="toolbar-label">{{ isDark ? "浅色模式" : "深色模式" }}</span>
+      </button>
 
-      <div class="banner-content">
-        <h1>智能化企业管理平台</h1>
+      <button type="button" class="toolbar-item" @click="onHelp">
+        <SvgIcon name="ri:question-line" :size="16" />
+        <span class="toolbar-label">帮助中心</span>
+      </button>
+    </header>
 
-        <p>高效、安全、稳定的一站式业务管理解决方案</p>
-
-        <div class="feature-list">
-          <div v-for="item in features" :key="item.name" class="feature-item">
-            <div class="feature-icon">
-              <SvgIcon :name="item.icon" size="18" />
-            </div>
-
-            <span>
-              {{ item.name }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="banner-footer">
-        <span> © {{ year }} Nexus Admin </span>
-      </div>
-    </aside>
-
-    <!-- 登录区域 -->
-
+    <!-- 主内容 -->
     <main class="login-main">
-      <div class="login-box">
-        <!-- 移动端LOGO -->
+      <div class="login-brand">
+        <div class="brand-logo">
+          <LogoMark :size="21" :stroke-width="3.2" />
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Nexus Pro</span>
+          <span class="brand-tagline">智能数据同步与管理平台</span>
+        </div>
+      </div>
 
-        <div class="mobile-brand">
-          <div class="brand-logo">
-            <SvgIcon name="ri:hexagon-fill" size="20" />
-          </div>
-
-          <span> Nexus Admin </span>
+      <div class="login-card">
+        <div class="login-head">
+          <h2 class="login-title">欢迎回来</h2>
+          <p class="login-subtitle">登录账号，继续管理你的数据同步任务</p>
         </div>
 
-        <div class="login-card">
-          <header class="login-header">
-            <h2>欢迎登录</h2>
+        <el-form ref="loginFormRef" :model="loginForm" :rules="rules" class="login-form" size="large">
+          <el-form-item prop="username">
+            <el-input v-model="loginForm.username" placeholder="请输入用户名" @keyup.enter="handleLogin">
+              <template #prefix>
+                <SvgIcon name="ri:user-line" :size="16" class="input-icon" />
+              </template>
+            </el-input>
+          </el-form-item>
 
-            <p>输入账号信息进入管理系统</p>
-          </header>
+          <el-form-item prop="password">
+            <el-input
+              v-model="loginForm.password"
+              type="password"
+              placeholder="请输入密码"
+              show-password
+              @keyup.enter="handleLogin"
+            >
+              <template #prefix>
+                <SvgIcon name="ri:lock-line" :size="16" class="input-icon" />
+              </template>
+            </el-input>
+          </el-form-item>
 
-          <el-form ref="loginFormRef" :model="loginForm" :rules="rules" class="login-form">
-            <el-form-item prop="username">
-              <el-input v-model="loginForm.username" size="large" placeholder="请输入用户名" :prefix-icon="UserIcon" />
-            </el-form-item>
-
-            <el-form-item prop="password">
-              <el-input v-model="loginForm.password" size="large" type="password" placeholder="请输入密码" show-password
-                :prefix-icon="LockIcon" @keyup.enter="handleLogin" />
-            </el-form-item>
-
-            <div class="login-options">
-              <el-checkbox v-model="rememberMe"> 记住登录 </el-checkbox>
-
-              <el-link type="primary" :underline="false"> 忘记密码？ </el-link>
-            </div>
-
-            <el-button class="login-btn" size="large" type="primary" :loading="loading" @click="handleLogin"> 登 录
-            </el-button>
-          </el-form>
-
-          <div class="security">
-            <SvgIcon name="ri:shield-check-line" size="16" />
-
-            企业级安全认证
+          <div class="login-options">
+            <el-checkbox v-model="rememberMe">记住我</el-checkbox>
+            <el-link type="primary" :underline="false">忘记密码？</el-link>
           </div>
+
+          <el-button class="login-btn" type="primary" :loading="loading" @click="handleLogin">
+            登 录
+          </el-button>
+        </el-form>
+
+        <div class="login-divider">
+          <span>其他登录方式</span>
         </div>
 
-        <footer class="copyright">Nexus Admin © {{ year }}</footer>
+        <div class="social-login">
+          <button v-for="item in socials" :key="item.name" type="button" class="social-btn" @click="onSocial(item.name)">
+            <span class="social-icon">
+              <SvgIcon :name="item.icon" :size="18" />
+            </span>
+            <span class="social-name">{{ item.name }}</span>
+          </button>
+        </div>
+
+        <div class="login-footer">
+          <span>还没有账号？</span>
+          <el-link type="primary" :underline="false">立即注册</el-link>
+        </div>
       </div>
     </main>
+
+    <footer class="login-copyright">© {{ year }} Nexus Pro. All rights reserved.</footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from "vue";
+import { ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
+import { ElMessage, FormInstance, FormRules } from "element-plus";
 
-import { User as UserIcon, Lock as LockIcon } from "@element-plus/icons-vue";
-
-import { FormInstance, FormRules, ElMessage } from "element-plus";
-
-import SvgIcon from "@/components/svg-icon/index.vue";
-
+import SvgIcon from "@/components/SvgIcon/index.vue";
+import LogoMark from "@/components/LogoMark/index.vue";
 import useUserStore from "@/store/modules/user";
+import useAppStore from "@/store/modules/app";
 
 const router = useRouter();
+const appStore = useAppStore();
 
-const loginFormRef = ref<FormInstance>();
-
+const loginFormRef = ref<FormInstance | null>(null);
 const loading = ref(false);
-
 const rememberMe = ref(false);
-
 const year = new Date().getFullYear();
+
+const isDark = computed(() => appStore.layoutSettings.isDark);
+const langLabel = computed(() => (appStore.layoutSettings.language === "zh-CN" ? "简体中文" : "English"));
 
 const loginForm = reactive({
   username: "",
-
   password: "",
 });
 
-const rules = reactive<FormRules>({
-  username: [
-    {
-      required: true,
-      message: "请输入用户名",
-      trigger: "blur",
-    },
-  ],
-
+const rules: FormRules = {
+  username: [{ required: true, message: "请输入用户名", trigger: "blur" }],
   password: [
-    {
-      required: true,
-
-      message: "请输入密码",
-
-      trigger: "blur",
-    },
-
-    {
-      min: 6,
-
-      message: "密码长度不少于6位",
-
-      trigger: "blur",
-    },
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { min: 6, message: "密码长度不少于 6 位", trigger: "blur" },
   ],
-});
+};
 
-const features = [
-  {
-    icon: "ri:shield-check-line",
-
-    name: "权限安全管理",
-  },
-
-  {
-    icon: "ri:database-2-line",
-
-    name: "数据智能分析",
-  },
-
-  {
-    icon: "ri:computer-line",
-
-    name: "多端业务协同",
-  },
+/* 三方登录 */
+const socials = [
+  { key: "wework", name: "企业微信", icon: "ri:chat-voice-line" },
+  { key: "wechat", name: "微信登录", icon: "ri:wechat-line" },
+  { key: "github", name: "GitHub", icon: "ri:github-line" },
 ];
+
+const onLangChange = (cmd: string) => {
+  appStore.setLanguage(cmd as "zh-CN" | "en");
+  ElMessage.success(cmd === "zh-CN" ? "已切换为简体中文" : "Switched to English");
+};
+
+const onToggleTheme = () => {
+  appStore.toggleDarkMode();
+  ElMessage.success(isDark.value ? "已切换为深色模式" : "已切换为浅色模式");
+};
+
+const onHelp = () => {
+  ElMessage.info("帮助中心正在建设中...");
+};
+
+const onSocial = (name: string) => {
+  ElMessage.info(`即将跳转 ${name} 登录`);
+};
 
 const handleLogin = async () => {
   const formEl = loginFormRef.value;
-
   if (!formEl) return;
-
   const valid = await formEl.validate().catch(() => false);
-
   if (!valid) return;
 
   loading.value = true;
-
   try {
     const userStore = useUserStore();
-
     const success = await userStore.signIn(loginForm);
-
     if (success) {
       ElMessage.success("登录成功");
-
       router.push("/");
     } else {
       ElMessage.error("登录失败，请检查账号密码");
@@ -197,255 +192,588 @@ const handleLogin = async () => {
   }
 };
 </script>
+
 <style lang="scss" scoped>
-.login-container {
+/* =========================================================
+ * 登录页局部色板（浅色为默认，深色模式切换为中性碳黑）
+ * ========================================================= */
+
+.login-page {
+  /* 基底与文字 */
+  --lp-bg: #f4f5f9;
+  --lp-text: var(--color-text-primary);
+  --lp-text-2: var(--color-text-secondary);
+  --lp-text-3: var(--color-text-tertiary);
+
+  /* 玻璃卡 */
+  --lp-card-bg: linear-gradient(155deg, rgb(255 255 255 / 82%), rgb(255 255 255 / 58%));
+  --lp-card-border: rgb(255 255 255 / 90%);
+  --lp-card-shadow: 0 24px 64px rgb(31 41 55 / 12%);
+
+  /* 输入框 */
+  --lp-input-bg: rgb(255 255 255 / 74%);
+  --lp-input-bg-hover: #ffffff;
+  --lp-input-border: var(--color-border);
+  --lp-input-border-hover: var(--color-border-hover);
+
+  /* 工具栏 / 社交按钮 / 分割线 */
+  --lp-ghost-bg: rgb(255 255 255 / 66%);
+  --lp-ghost-border: var(--color-border-light);
+  --lp-ghost-text: var(--color-text-secondary);
+  --lp-ghost-bg-hover: #ffffff;
+  --lp-divider: var(--color-border-light);
+  --lp-social-bg: rgb(255 255 255 / 74%);
+
+  /* 光晕强度 */
+  --lp-blob-strength: 26%;
+
+  position: relative;
+
   display: flex;
+  flex-direction: column;
 
   min-height: 100vh;
 
-  background: #f5f7fb;
-}
-
-/* ============================
-   左侧品牌区域
-============================ */
-
-.login-banner {
-  position: relative;
-
-  display: none;
-
-  flex-direction: column;
-
-  width: 52%;
-
-  padding: 48px 60px;
-
   overflow: hidden;
 
-  color: #fff;
+  color: var(--lp-text);
 
   background:
-    radial-gradient(circle at 20% 20%, rgba(64, 128, 255, 0.35), transparent 35%), linear-gradient(135deg, #0f172a, #1d4ed8);
+    radial-gradient(1100px 700px at 75% -10%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 70%),
+    var(--lp-bg);
+}
 
-  @media (min-width: 1024px) {
-    display: flex;
+/* 深色模式：中性碳黑基底，不用蓝色 */
+html.dark .login-page {
+  --lp-bg: #0c0e13;
+  --lp-text: #f3f4f6;
+  --lp-text-2: rgb(243 244 246 / 62%);
+  --lp-text-3: rgb(243 244 246 / 40%);
+
+  --lp-card-bg: linear-gradient(155deg, rgb(255 255 255 / 10%), rgb(255 255 255 / 4%));
+  --lp-card-border: rgb(255 255 255 / 12%);
+  --lp-card-shadow: 0 24px 64px rgb(0 0 0 / 45%);
+
+  --lp-input-bg: rgb(255 255 255 / 7%);
+  --lp-input-bg-hover: rgb(255 255 255 / 11%);
+  --lp-input-border: rgb(255 255 255 / 15%);
+  --lp-input-border-hover: rgb(255 255 255 / 26%);
+
+  --lp-ghost-bg: rgb(255 255 255 / 6%);
+  --lp-ghost-border: rgb(255 255 255 / 10%);
+  --lp-ghost-text: rgb(255 255 255 / 75%);
+  --lp-ghost-bg-hover: rgb(255 255 255 / 12%);
+  --lp-divider: rgb(255 255 255 / 12%);
+  --lp-social-bg: rgb(255 255 255 / 8%);
+
+  --lp-blob-strength: 42%;
+}
+
+/* =========================================================
+ * 极光背景
+ * ========================================================= */
+
+.aurora {
+  position: absolute;
+
+  inset: 0;
+
+  pointer-events: none;
+}
+
+.blob {
+  position: absolute;
+
+  border-radius: 50%;
+
+  filter: blur(90px);
+
+  &.blob-a {
+    top: -160px;
+
+    left: 12%;
+
+    width: 520px;
+    height: 520px;
+
+    background: color-mix(in srgb, var(--color-primary) var(--lp-blob-strength), transparent);
+
+    animation: drift-a 26s ease-in-out infinite alternate;
   }
 
-  &::after {
-    content: "";
+  &.blob-b {
+    right: -120px;
 
-    position: absolute;
+    top: 30%;
 
-    width: 600px;
+    width: 460px;
+    height: 460px;
 
-    height: 600px;
+    background: color-mix(in srgb, #22d3ee calc(var(--lp-blob-strength) * 0.7), transparent);
 
-    right: -250px;
+    animation: drift-b 32s ease-in-out infinite alternate;
+  }
 
-    bottom: -250px;
+  &.blob-c {
+    bottom: -180px;
 
-    border-radius: 50%;
+    left: 30%;
 
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.12), transparent 70%);
+    width: 560px;
+    height: 560px;
+
+    background: color-mix(in srgb, #8b5cf6 calc(var(--lp-blob-strength) * 0.7), transparent);
+
+    animation: drift-c 28s ease-in-out infinite alternate;
   }
 }
 
-/* 品牌 */
+.aurora-grid {
+  position: absolute;
 
-.brand {
+  inset: 0;
+
+  background-image:
+    linear-gradient(var(--color-border-light) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border-light) 1px, transparent 1px);
+
+  background-size: 48px 48px;
+
+  opacity: 0.55;
+
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 20%, transparent 72%);
+
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 40%, #000 20%, transparent 72%);
+}
+
+/* =========================================================
+ * 顶部工具栏
+ * ========================================================= */
+
+.login-toolbar {
   position: relative;
 
   z-index: 2;
 
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
 
+  flex-shrink: 0;
+
+  gap: var(--space-2);
+
+  padding: var(--space-5) var(--space-8) 0;
+}
+
+.toolbar-item {
+  /* 原生 button：字体需显式继承 */
+  font-family: inherit;
+
+  display: flex;
   align-items: center;
 
-  gap: 14px;
+  gap: var(--space-1);
+
+  height: 34px;
+
+  padding: 0 var(--space-3);
+
+  border-radius: var(--radius-round);
+
+  background: var(--lp-ghost-bg);
+
+  border: 1px solid var(--lp-ghost-border);
+
+  color: var(--lp-ghost-text);
+
+  font-size: var(--font-size-sm);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--lp-ghost-bg-hover);
+
+    color: var(--lp-text);
+  }
+}
+
+/* =========================================================
+ * 主内容
+ * ========================================================= */
+
+.login-main {
+  position: relative;
+
+  z-index: 1;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: var(--space-4) var(--space-5) var(--space-5);
+}
+
+/* 品牌行 */
+
+.login-brand {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  margin-bottom: var(--space-6);
+
+  animation: rise 0.6s ease backwards;
 }
 
 .brand-logo {
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  width: 46px;
+  width: 42px;
+  height: 42px;
 
-  height: 46px;
+  border-radius: var(--radius-lg);
 
-  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-active));
 
-  border-radius: 14px;
+  color: #fff;
 
-  background: linear-gradient(135deg, #60a5fa, #2563eb);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-primary) 40%, transparent);
+}
 
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+.brand-text {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
 }
 
 .brand-name {
-  font-size: 22px;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
 
-  font-weight: 700;
+  line-height: 1.2;
+
+  letter-spacing: 0.3px;
+
+  color: var(--lp-text);
 }
 
-.brand-sub {
-  margin-top: 4px;
+.brand-tagline {
+  font-size: var(--font-size-xs);
 
-  font-size: 12px;
-
-  opacity: 0.7;
+  color: var(--lp-text-3);
 }
 
-/* 中间内容 */
+/* 玻璃登录卡 */
 
-.banner-content {
-  position: relative;
-
-  z-index: 2;
-
-  flex: 1;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-}
-
-.banner-content h1 {
-  margin: 0;
-
-  font-size: 38px;
-
-  line-height: 1.3;
-
-  letter-spacing: -1px;
-}
-
-.banner-content p {
-  margin-top: 18px;
-
-  font-size: 16px;
-
-  opacity: 0.75;
-}
-
-/* 功能列表 */
-
-.feature-list {
-  display: flex;
-
-  gap: 20px;
-
-  margin-top: 45px;
-}
-
-.feature-item {
-  display: flex;
-
-  align-items: center;
-
-  gap: 8px;
-
-  padding: 12px 18px;
-
-  border-radius: 12px;
-
-  background: rgba(255, 255, 255, 0.1);
-
-  backdrop-filter: blur(10px);
-
-  font-size: 14px;
-}
-
-.feature-icon {
-  display: flex;
-}
-
-/* 底部 */
-
-.banner-footer {
-  position: relative;
-
-  z-index: 2;
-
-  font-size: 13px;
-
-  opacity: 0.6;
-}
-
-/* ============================
-   登录主体
-============================ */
-
-.login-main {
-  flex: 1;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 30px;
-
-  background: linear-gradient(160deg, #ffffff, #f3f6ff);
-}
-
-.login-box {
+.login-card {
   width: 100%;
 
   max-width: 420px;
+
+  padding: var(--space-7) var(--space-8) var(--space-6);
+
+  border-radius: var(--radius-2xl);
+
+  background: var(--lp-card-bg);
+
+  border: 1px solid var(--lp-card-border);
+
+  backdrop-filter: blur(24px) saturate(150%);
+
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+
+  box-shadow: var(--lp-card-shadow);
+
+  animation: rise 0.6s ease 0.1s backwards;
 }
 
-/* 移动端品牌 */
+.login-head {
+  margin-bottom: var(--space-6);
 
-.mobile-brand {
-  display: flex;
+  text-align: center;
+}
 
-  justify-content: center;
+.login-title {
+  margin: 0;
 
-  align-items: center;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
 
-  gap: 10px;
+  letter-spacing: -0.3px;
 
-  margin-bottom: 25px;
+  color: var(--lp-text);
+}
 
-  font-size: 22px;
+.login-subtitle {
+  margin: var(--space-2) 0 0;
 
-  font-weight: 700;
+  font-size: var(--font-size-sm);
 
-  @media (min-width: 1024px) {
-    display: none;
+  color: var(--lp-text-2);
+}
+
+/* 表单 */
+
+.login-form {
+  /* 20px 间距为 16px 高的校验错误提示留出可见空间，避免贴住下一个输入框 */
+  :deep(.el-form-item) {
+    margin-bottom: var(--space-5);
+  }
+
+  :deep(.el-input__wrapper) {
+    padding: 0 var(--space-3);
+
+    border-radius: var(--radius-md);
+
+    background: var(--lp-input-bg);
+
+    box-shadow: 0 0 0 1px var(--lp-input-border) inset;
+
+    transition:
+      background-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+  }
+
+  :deep(.el-input__wrapper:hover) {
+    background: var(--lp-input-bg-hover);
+
+    box-shadow: 0 0 0 1px var(--lp-input-border-hover) inset;
+  }
+
+  :deep(.el-input__wrapper.is-focus) {
+    background: var(--lp-input-bg-hover);
+
+    box-shadow:
+      0 0 0 1px var(--color-primary) inset,
+      0 0 0 4px var(--color-primary-light);
+  }
+
+  :deep(.el-input__inner) {
+    height: 44px;
+
+    color: var(--lp-text);
+
+    font-size: var(--font-size-base);
+
+    &::placeholder {
+      color: var(--lp-text-3);
+    }
   }
 }
 
-/* 登录卡片 */
-
-.login-card {
-  padding: 45px 38px;
-
-  border-radius: 26px;
-
-  background: rgba(255, 255, 255, 0.85);
-
-  backdrop-filter: blur(20px);
-
-  border: 1px solid rgba(255, 255, 255, 0.7);
-
-  box-shadow: 0 25px 70px rgba(15, 23, 42, 0.12);
-
-  animation: cardShow 0.6s ease;
+.input-icon {
+  color: var(--lp-text-3);
 }
 
-@keyframes cardShow {
+.login-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin: var(--space-1) 0 var(--space-5);
+
+  font-size: var(--font-size-sm);
+
+  :deep(.el-checkbox__label) {
+    color: var(--lp-text-2);
+  }
+
+  :deep(.el-checkbox__inner) {
+    background: var(--lp-input-bg);
+
+    border-color: var(--lp-input-border-hover);
+  }
+}
+
+.login-btn {
+  width: 100%;
+
+  height: 44px;
+
+  border-radius: var(--radius-md);
+
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+
+  letter-spacing: 4px;
+
+  text-indent: 4px;
+
+  border: none;
+
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base);
+
+  &:hover {
+    transform: translateY(-1px);
+
+    box-shadow: 0 10px 28px color-mix(in srgb, var(--color-primary) 45%, transparent);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+/* 分割线 */
+
+.login-divider {
+  display: flex;
+  align-items: center;
+
+  margin: var(--space-6) 0 var(--space-5);
+
+  font-size: var(--font-size-xs);
+
+  color: var(--lp-text-3);
+
+  &::before,
+  &::after {
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: var(--lp-divider);
+  }
+
+  span {
+    padding: 0 var(--space-4);
+  }
+}
+
+/* 三方登录 */
+
+.social-login {
+  display: flex;
+  justify-content: center;
+
+  gap: var(--space-8);
+}
+
+.social-btn {
+  /* 原生 button 重置：去掉 UA 默认边框/底色/字体，保留语义与键盘可达性 */
+  appearance: none;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  font-family: inherit;
+
+  color: inherit;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  cursor: pointer;
+
+  transition: transform var(--transition-base);
+
+  &:hover {
+    transform: translateY(-2px);
+
+    .social-icon {
+      border-color: var(--color-primary);
+
+      color: var(--color-primary);
+
+      box-shadow: 0 6px 18px color-mix(in srgb, var(--color-primary) 22%, transparent);
+    }
+  }
+}
+
+.social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 44px;
+  height: 44px;
+
+  border-radius: var(--radius-round);
+
+  background: var(--lp-social-bg);
+
+  border: 1px solid var(--lp-input-border);
+
+  color: var(--lp-text-2);
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base);
+}
+
+.social-name {
+  font-size: var(--font-size-xs);
+
+  color: var(--lp-text-2);
+}
+
+/* 注册引导 */
+
+.login-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-1);
+
+  margin-top: var(--space-6);
+
+  font-size: var(--font-size-sm);
+
+  color: var(--lp-text-2);
+}
+
+/* 版权 */
+
+.login-copyright {
+  position: relative;
+
+  z-index: 1;
+
+  flex-shrink: 0;
+
+  padding: var(--space-4);
+
+  text-align: center;
+
+  font-size: var(--font-size-xs);
+
+  color: var(--lp-text-3);
+}
+
+/* =========================================================
+ * 动画
+ * ========================================================= */
+
+@keyframes rise {
   from {
     opacity: 0;
 
-    transform: translateY(20px);
+    transform: translateY(14px);
   }
 
   to {
@@ -455,159 +783,102 @@ const handleLogin = async () => {
   }
 }
 
-/* 标题 */
-
-.login-header {
-  margin-bottom: 32px;
-
-  h2 {
-    margin: 0;
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    color: #111827;
+@keyframes drift-a {
+  from {
+    transform: translate(-4%, -4%) scale(1);
   }
 
-  p {
-    margin-top: 10px;
-
-    color: #64748b;
-
-    font-size: 14px;
+  to {
+    transform: translate(10%, 8%) scale(1.18);
   }
 }
 
-/* 输入框 */
-
-.login-form {
-  :deep(.el-input__wrapper) {
-    height: 48px;
-
-    padding: 0 15px;
-
-    border-radius: 12px;
-
-    background: #f8fafc;
-
-    box-shadow: inset 0 0 0 1px #e2e8f0;
-
-    transition: 0.25s;
+@keyframes drift-b {
+  from {
+    transform: translate(6%, -6%) scale(1.1);
   }
 
-  :deep(.el-input__wrapper.is-focus) {
-    background: #fff;
-
-    box-shadow:
-      0 0 0 4px rgba(37, 99, 235, 0.12),
-      inset 0 0 0 1px #2563eb;
+  to {
+    transform: translate(-8%, 6%) scale(0.95);
   }
 }
 
-.login-options {
-  display: flex;
+@keyframes drift-c {
+  from {
+    transform: translate(0, 4%) scale(0.95);
+  }
 
-  justify-content: space-between;
-
-  align-items: center;
-
-  margin: 18px 0 25px;
-
-  font-size: 13px;
-}
-
-/* 登录按钮 */
-
-.login-btn {
-  width: 100%;
-
-  height: 50px;
-
-  border-radius: 14px;
-
-  border: none;
-
-  font-size: 16px;
-
-  font-weight: 600;
-
-  letter-spacing: 2px;
-
-  background: linear-gradient(135deg, #2563eb, #60a5fa);
-
-  box-shadow: 0 12px 25px rgba(37, 99, 235, 0.35);
-
-  transition: 0.3s;
-
-  &:hover {
-    transform: translateY(-2px);
-
-    box-shadow: 0 18px 35px rgba(37, 99, 235, 0.4);
+  to {
+    transform: translate(-10%, -8%) scale(1.15);
   }
 }
 
-/* 安全提示 */
+/* =========================================================
+ * 响应式
+ * ========================================================= */
 
-.security {
-  display: flex;
+@media (max-width: 767px) {
+  .login-toolbar {
+    padding: var(--space-3) var(--space-4) 0;
 
-  align-items: center;
+    .toolbar-label {
+      display: none;
+    }
 
-  justify-content: center;
-
-  gap: 8px;
-
-  margin-top: 30px;
-
-  color: #64748b;
-
-  font-size: 13px;
-}
-
-/* 页脚 */
-
-.copyright {
-  margin-top: 25px;
-
-  text-align: center;
-
-  color: #94a3b8;
-
-  font-size: 12px;
-}
-
-/* ============================
-   暗色模式
-============================ */
-
-.dark {
-  .login-main {
-    background: #020617;
+    .toolbar-item {
+      padding: 0 var(--space-2);
+    }
   }
 
   .login-card {
-    background: rgba(15, 23, 42, 0.8);
-
-    border-color: rgba(255, 255, 255, 0.08);
+    padding: var(--space-6) var(--space-5) var(--space-5);
   }
+}
 
-  .login-header h2 {
-    color: #fff;
-  }
+/* 矮屏压缩纵向空间，保证卡片完整可见 */
+@media (max-height: 780px) {
+  .login-brand {
+    margin-bottom: var(--space-4);
 
-  .login-header p,
-  .security,
-  .copyright {
-    color: #94a3b8;
-  }
-
-  .login-form {
-    :deep(.el-input__wrapper) {
-      background: #111827;
-
-      box-shadow: inset 0 0 0 1px #334155;
+    .brand-tagline {
+      display: none;
     }
+  }
+
+  .login-card {
+    padding: var(--space-6) var(--space-7) var(--space-5);
+  }
+
+  .login-head {
+    margin-bottom: var(--space-4);
+  }
+
+  .login-divider {
+    margin: var(--space-4) 0;
+  }
+
+  .login-footer {
+    margin-top: var(--space-4);
+  }
+}
+
+/* Reduced Motion */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .blob {
+    animation: none;
+  }
+
+  .login-brand,
+  .login-card {
+    animation: none;
+  }
+
+  .login-btn,
+  .social-btn,
+  .toolbar-item {
+    transition: none;
   }
 }
 </style>

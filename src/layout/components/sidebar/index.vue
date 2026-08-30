@@ -1,310 +1,435 @@
 <template>
-  <div class="layout-sidebar" :class="{ 'sidebar-light': sidebarTheme === 'light' }">
-    <!-- Logo 区域 -->
-    <div class="sidebar-header">
-      <div class="logo-box">
-        <SvgIcon name="ri:hexagon-fill" size="20" />
-      </div>
-      <Transition name="fade">
-        <span v-if="!isCollapse" class="logo-text">Nexus Pro</span>
-      </Transition>
-    </div>
+  <aside
+class="sidebar" :class="{
+    'is-collapse': appStore.isCollapse && !appStore.isMobile,
+    'is-drawer': appStore.isMobile,
+  }">
+    <!-- Logo -->
+    <Logo :collapse="appStore.isCollapse && !appStore.isMobile" />
 
-    <!-- 菜单 -->
-    <el-scrollbar class="sidebar-body">
+    <!-- Menu -->
+    <el-scrollbar class="sidebar-scrollbar">
       <el-menu
-        :default-active="activeMenu"
-        :collapse="isCollapse"
-        :collapse-transition="false"
-        unique-opened
-        router
-        class="side-menu"
-      >
-        <SidebarItem v-for="route in menuRoutes" :key="route.path" :item="route" />
+class="sidebar-menu" :collapse="appStore.isCollapse && !appStore.isMobile" :default-active="activeMenu"
+        :collapse-transition="false" unique-opened @select="handleSelect">
+        <SidebarItem v-for="menu in menus" :key="menu.path" :item="menu" />
       </el-menu>
     </el-scrollbar>
-
-    <!-- 折叠按钮 -->
-    <div class="sidebar-footer" @click="appStore.toggleSidebar()">
-      <SvgIcon :name="isCollapse ? 'ri:menu-unfold-line' : 'ri:menu-fold-line'" size="16" />
-      <Transition name="fade">
-        <span v-if="!isCollapse" class="footer-text">收起菜单</span>
-      </Transition>
-    </div>
-  </div>
+  </aside>
 </template>
 
 <script setup lang="ts">
 import { computed } from "vue";
-import { useRoute } from "vue-router";
-import SidebarItem from "./SidebarItem.vue";
-import SvgIcon from "@/components/svg-icon/index.vue";
+import { useRoute, useRouter } from "vue-router";
+
 import useAppStore from "@/store/modules/app";
 import useMenuStore from "@/store/modules/menu";
 
+import Logo from "./Logo.vue";
+import SidebarItem from "./SidebarItem.vue";
+
+/* =========================================================
+ * Store
+ * ========================================================= */
+
 const route = useRoute();
+const router = useRouter();
+
 const appStore = useAppStore();
 const menuStore = useMenuStore();
 
-const isCollapse = computed(() => appStore.isCollapse);
-const sidebarTheme = computed(() => appStore.layoutSettings.sidebarTheme);
-const menuRoutes = computed(() => menuStore.sidebarMenus);
+/* =========================================================
+ * Menu
+ * ========================================================= */
 
-const activeMenu = computed(() => {
-  const { meta, path } = route;
-  return (meta?.activeMenu as string) || path;
-});
+const menus = computed(() => menuStore.sidebarMenus);
+
+const activeMenu = computed(() => (route.meta.activeMenu as string) || route.path);
+
+/* =========================================================
+ * Navigation
+ * ========================================================= */
+
+function handleSelect(index: string) {
+  if (index !== route.path) {
+    router.push(index);
+  }
+
+  if (appStore.isMobile) {
+    appStore.closeMobileSidebar();
+  }
+}
 </script>
 
-<style scoped>
-.layout-sidebar {
+<style scoped lang="scss">
+/* =========================================================
+ * Sidebar
+ * ========================================================= */
+
+.sidebar {
+  position: relative;
+
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
+  flex-shrink: 0;
+
+  width: var(--layout-sidebar-width);
+  height: 100vh;
+
   overflow: hidden;
-  background: var(--menu-bg);
+
+  background: var(--color-sidebar-bg);
+
+  color: var(--color-sidebar-text);
+
+  border-right: 1px solid var(--color-sidebar-border);
+
+  transition:
+    width var(--transition-slow),
+    flex-basis var(--transition-slow),
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+
+  /* -------------------------------------------------------
+   * Collapse
+   * ------------------------------------------------------- */
+
+  &.is-collapse {
+    /* 组件是 flex 子项，仅改 width 会被 flex-basis 压制，需一并收缩 */
+    flex-basis: var(--layout-sidebar-collapse-width);
+
+    width: var(--layout-sidebar-collapse-width);
+  }
+
+  /* -------------------------------------------------------
+   * Mobile Drawer
+   * ------------------------------------------------------- */
+
+  &.is-drawer {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    z-index: 2001;
+
+    width: var(--layout-sidebar-width);
+
+    box-shadow: var(--shadow-lg);
+  }
 }
 
-/* ===== Logo 区域 ===== */
-.sidebar-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  height: var(--header-height);
-  padding: 0 16px;
-  flex-shrink: 0;
-}
+/* =========================================================
+ * Scrollbar
+ * ========================================================= */
 
-.logo-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  flex-shrink: 0;
-  background: var(--color-primary);
-  border-radius: var(--radius-md);
-  color: var(--text-inverse);
-}
-
-.logo-text {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--menu-text-active);
-  white-space: nowrap;
-}
-
-/* ===== 菜单滚动区 ===== */
-.sidebar-body {
+.sidebar-scrollbar {
   flex: 1;
+
   min-height: 0;
+
   overflow: hidden;
-  padding: 8px 0;
 }
 
-.sidebar-body :deep(.el-scrollbar__bar.is-horizontal) {
-  display: none !important;
+/* =========================================================
+ * Menu
+ * ========================================================= */
+
+.sidebar-menu {
+  width: 100%;
+
+  border-right: none;
+
+  background: transparent;
+
+  /* 宽度/内边距与侧栏收缩动画同速，避免折叠时菜单先于容器跳位 */
+  transition:
+    width var(--transition-slow),
+    padding var(--transition-slow);
+
+  /* Element Plus Menu Token */
+
+  --el-menu-bg-color: transparent;
+
+  --el-menu-text-color: var(--color-sidebar-text);
+
+  --el-menu-hover-bg-color: var(--color-sidebar-hover);
+
+  --el-menu-active-color: var(--color-sidebar-text-active);
+
+  --el-menu-item-height: var(--component-menu-height);
+
+  --el-menu-sub-item-height: var(--component-menu-height);
 }
 
-.sidebar-body :deep(.el-scrollbar__thumb) {
-  background: rgba(255, 255, 255, 0.1) !important;
+/* =========================================================
+ * Menu Container
+ * ========================================================= */
+
+.sidebar-menu:not(.el-menu--collapse) {
+  padding: var(--space-2) var(--space-3) var(--space-4);
 }
 
-/* ===== 折叠按钮 ===== */
-.sidebar-footer {
+/* =========================================================
+ * Menu Item
+ * ========================================================= */
+
+:deep(.el-menu-item),
+:deep(.el-sub-menu__title) {
+  position: relative;
+
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 44px;
-  padding: 0 16px;
-  flex-shrink: 0;
-  color: var(--menu-text);
-  cursor: pointer;
-  transition: all var(--transition-fast);
+
+  height: var(--component-menu-height);
+
+  line-height: var(--component-menu-height);
+
+  margin-bottom: var(--space-1);
+
+  padding: 0 var(--space-3);
+
+  border-radius: var(--radius-md);
+
+  color: var(--color-sidebar-text);
+
+  font-size: var(--font-size-base);
+
+  font-weight: var(--font-weight-medium);
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
-.sidebar-footer:hover {
-  color: var(--menu-text-active);
+/* =========================================================
+ * Hover
+ * ========================================================= */
+
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  background: var(--color-sidebar-hover);
+
+  color: var(--color-sidebar-text-active);
 }
 
-.footer-text {
-  font-size: 14px;
-  white-space: nowrap;
+/* =========================================================
+ * Active
+ * ========================================================= */
+
+:deep(.el-menu-item.is-active) {
+  background: var(--color-sidebar-active-bg);
+
+  color: var(--color-sidebar-text-active);
+
+  font-weight: var(--font-weight-semibold);
 }
 
-/* ===== 浅色侧边栏（布局设置-菜单风格） ===== */
-.layout-sidebar.sidebar-light {
-  --menu-bg: #ffffff;
-  --menu-text: #4e5969;
-  --menu-text-hover: #1d2129;
-  --menu-text-active: #ffffff;
-  --menu-hover-bg: #f2f3f5;
-  --menu-active-bg: var(--color-primary);
-  /* 与右侧白色 header/内容区分 */
-  border-right: 1px solid var(--border-color);
+/* =========================================================
+ * Active Indicator
+ * ========================================================= */
+
+:deep(.el-menu-item.is-active)::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  top: 50%;
+
+  width: 3px;
+
+  height: 18px;
+
+  transform: translateY(-50%);
+
+  border-radius: 0 var(--radius-round) var(--radius-round) 0;
+
+  background: var(--color-primary);
 }
 
-.layout-sidebar.sidebar-light .logo-text {
-  color: var(--menu-text-hover);
+/* =========================================================
+ * Sub Menu
+ * ========================================================= */
+
+:deep(.el-sub-menu) {
+  margin-bottom: var(--space-1);
 }
 
-.layout-sidebar.sidebar-light .sidebar-footer:hover {
-  color: var(--menu-text-hover);
+:deep(.el-sub-menu .el-menu) {
+  background: transparent;
 }
 
-.layout-sidebar.sidebar-light :deep(.el-scrollbar__thumb) {
-  background: rgba(0, 0, 0, 0.15) !important;
-}
-</style>
+/* =========================================================
+ * Sub Menu Item
+ * ========================================================= */
 
-<!-- 全局：深色侧边栏菜单样式 -->
-<style>
-/* 菜单基础变量：覆盖 EP 默认值 */
-.side-menu {
-  --el-menu-bg-color: transparent;
-  --el-menu-border-color: transparent;
-  --el-menu-text-color: var(--menu-text);
-  --el-menu-hover-bg-color: transparent;
-  --el-menu-hover-text-color: var(--menu-text-hover);
-  --el-menu-active-color: var(--menu-text-active);
-  --el-menu-item-height: 40px;
-  --el-menu-sub-item-height: 40px;
-  --el-menu-item-font-size: 14px;
-  --el-menu-base-level-padding: 16px;
-  --el-menu-level-padding: 16px;
-  --el-menu-icon-margin-right: 12px;
+:deep(.el-menu .el-menu--inline .el-menu-item) {
+  padding-left: 52px !important;
+
+  font-size: var(--font-size-sm);
 }
 
-/* 菜单项 */
-.side-menu .el-menu-item,
-.side-menu .el-sub-menu__title {
-  height: 40px;
-  line-height: 40px;
-  margin: 2px 10px;
-  padding: 0 12px !important;
-  border-radius: var(--radius-md) !important;
-  color: var(--menu-text) !important;
-  transition: all 0.15s;
-}
+/* =========================================================
+ * Icon
+ * ========================================================= */
 
-/* 自定义图标对齐 */
-.side-menu .el-menu-item .svg-icon-container,
-.side-menu .el-sub-menu__title .svg-icon-container {
+:deep(.el-menu-item .svg-icon-container),
+:deep(.el-sub-menu__title .svg-icon-container) {
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
-  margin-right: 12px;
+
+  width: 18px;
+  height: 18px;
+
+  margin-right: var(--space-3);
+
+  font-size: 18px;
+
+  flex-shrink: 0;
+
+  color: currentColor;
+}
+
+/* =========================================================
+ * Element Plus Default Icon
+ * ========================================================= */
+
+:deep(.el-menu-item .el-icon),
+:deep(.el-sub-menu__title .el-icon) {
+  width: 18px;
+  height: 18px;
+
+  margin-right: var(--space-3);
+
+  font-size: 18px;
+
   flex-shrink: 0;
 }
 
-/* 折叠态：菜单占满侧边栏，激活背景与图标居中 */
-.side-menu.el-menu--collapse {
-  /* 菜单宽度 = icon(32) + base-padding(16)*2 = 64px，与侧边栏等宽 */
-  --el-menu-icon-width: 32px;
+/* =========================================================
+ * Collapse Menu
+ * ========================================================= */
+
+.sidebar-menu.el-menu--collapse {
+  width: var(--layout-sidebar-collapse-width);
 }
 
-.side-menu.el-menu--collapse .el-menu-item,
-.side-menu.el-menu--collapse .el-sub-menu__title {
-  margin: 2px 8px;
-  padding: 0 !important;
-  justify-content: center;
+/* ---------------------------------------------------------
+ * Collapse Icon
+ * --------------------------------------------------------- */
+
+.sidebar-menu.el-menu--collapse {
+
+  :deep(.el-menu-item),
+  :deep(.el-sub-menu__title) {
+    justify-content: center;
+
+    padding: 0;
+  }
+
+  /* EP 折叠态把叶子项内容包进绝对定位的 .el-tooltip__trigger（自带 20px 内边距），
+     不重置会导致叶子菜单图标与子菜单图标错位 3px */
+  :deep(.el-menu-item .el-tooltip__trigger) {
+    position: static;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: auto;
+
+    padding: 0;
+  }
+
+  :deep(.el-menu-item .svg-icon-container),
+  :deep(.el-sub-menu__title .svg-icon-container) {
+    margin-right: 0;
+  }
+
+  :deep(.el-menu-item .el-icon),
+  :deep(.el-sub-menu__title .el-icon) {
+    margin-right: 0;
+  }
+
+  /* 折叠状态隐藏 Active 左侧指示条 */
+
+  :deep(.el-menu-item.is-active)::before {
+    display: none;
+  }
 }
 
-.side-menu.el-menu--collapse .el-menu-item .el-menu-tooltip__trigger,
-.side-menu.el-menu--collapse .el-sub-menu__title .el-menu-tooltip__trigger {
-  padding: 0 !important;
-  justify-content: center;
+/* =========================================================
+ * Popup Menu
+ * ========================================================= */
+
+:global(.el-menu--popup) {
+  min-width: 180px;
+
+  padding: var(--space-2);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-bg-card);
+
+  box-shadow: var(--shadow-md);
+
+  --el-menu-bg-color: var(--color-bg-card);
+
+  --el-menu-text-color: var(--color-text-primary);
+
+  --el-menu-hover-bg-color: var(--color-bg-hover);
+
+  --el-menu-active-color: var(--color-primary);
 }
 
-.side-menu.el-menu--collapse .el-menu-item .svg-icon-container,
-.side-menu.el-menu--collapse .el-sub-menu__title .svg-icon-container {
-  margin-right: 0;
+/* Popup Menu Item */
+
+:global(.el-menu--popup .el-menu-item),
+:global(.el-menu--popup .el-sub-menu__title) {
+  height: var(--component-menu-height);
+
+  line-height: var(--component-menu-height);
+
+  margin-bottom: var(--space-1);
+
+  border-radius: var(--radius-md);
 }
 
-/* hover：仅文字变亮，无背景 */
-.side-menu .el-menu-item:hover,
-.side-menu .el-sub-menu__title:hover {
-  color: var(--menu-text-hover) !important;
+/* Popup Icon */
+
+:global(.el-menu--popup .svg-icon-container),
+:global(.el-menu--popup .el-icon) {
+  width: 18px;
+  height: 18px;
+
+  margin-right: var(--space-3);
+
+  font-size: 18px;
 }
 
-/* 激活态：主色实心填充（图片风格） */
-.side-menu .el-menu-item.is-active {
-  background-color: var(--menu-active-bg) !important;
-  color: var(--menu-text-active) !important;
-  font-weight: 500;
+/* =========================================================
+ * Scrollbar
+ * ========================================================= */
+
+:deep(.el-scrollbar__wrap) {
+  overflow-x: hidden;
 }
 
-.side-menu .el-menu-item.is-active .svg-icon-container,
-.side-menu .el-menu-item.is-active i {
-  color: var(--menu-text-active) !important;
+:deep(.el-scrollbar__bar.is-vertical) {
+  right: 2px;
 }
 
-/* 子菜单箭头 */
-.side-menu .el-sub-menu__icon-arrow {
-  font-size: 12px;
-  color: var(--menu-text) !important;
-}
+:deep(.el-scrollbar__thumb) {
+  background: var(--color-sidebar-scrollbar);
 
-.side-menu .el-sub-menu.is-opened > .el-sub-menu__title {
-  color: var(--menu-text-hover) !important;
-  font-weight: 500;
-}
-
-.side-menu .el-sub-menu.is-opened > .el-sub-menu__title .el-sub-menu__icon-arrow {
-  color: var(--menu-text-hover) !important;
-}
-
-/* 子菜单项：略小字号 */
-.side-menu .el-sub-menu .el-menu-item {
-  height: 38px !important;
-  line-height: 38px !important;
-  font-size: 14px;
-}
-
-/* === 折叠弹层（白底） === */
-/* 仅外层 popper 保留边框/圆角/内边距 */
-.el-popper.side-popper {
-  padding: 6px !important;
-  background: var(--bg-card) !important;
-  border: 1px solid var(--border-lighter) !important;
-  border-radius: var(--radius-lg) !important;
-  box-shadow: var(--shadow-md) !important;
-}
-
-/* 中间容器层：去掉与 popper-class 重复的内部边框，只透出外层圆角 */
-.el-menu--popup-container.side-popper {
-  padding: 0 !important;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-}
-
-.side-popper .el-menu {
-  background: transparent !important;
-  border-right: none !important;
-  padding: 0 !important;
-  min-width: 160px !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-}
-
-.side-popper .el-menu-item {
-  height: 36px;
-  margin: 2px;
-  border-radius: var(--radius-sm);
-  color: var(--text-regular) !important;
-}
-
-.side-popper .el-menu-item:hover {
-  background-color: var(--bg-hover) !important;
-  color: var(--text-primary) !important;
-}
-
-.side-popper .el-menu-item.is-active {
-  background-color: var(--el-color-primary-light-9) !important;
-  color: var(--color-primary) !important;
-  font-weight: 500;
+  opacity: 0.5;
 }
 </style>

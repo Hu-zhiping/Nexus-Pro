@@ -26,6 +26,8 @@ const containerStyle = computed(() => {
   return {
     width: size,
     height: size,
+    // iconify svg 使用 1em 作为尺寸，fontSize 与 size 保持一致，避免图标被外层字体大小影响
+    fontSize: size,
     color: props.color || "currentcolor",
   };
 });
@@ -38,5 +40,7 @@ const containerStyle = computed(() => {
   justify-content: center;
   flex-shrink: 0;
   line-height: 1;
+  /* 内联上下文（面包屑/按钮文字等）中以中线对齐 */
+  vertical-align: middle;
 }
 </style>

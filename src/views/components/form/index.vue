@@ -60,7 +60,7 @@
               </el-input>
             </el-form-item>
             <el-form-item label="活动区域" prop="region">
-              <el-select v-model="advancedForm.region" placeholder="请选择活动区域" class="w-full">
+              <el-select v-model="advancedForm.region" placeholder="请选择活动区域" style="width: 100%">
                 <el-option label="区域一" value="shanghai" />
                 <el-option label="区域二" value="beijing" />
                 <el-option label="区域三" value="guangzhou" />
@@ -73,7 +73,7 @@
                 range-separator="至"
                 start-placeholder="开始时间"
                 end-placeholder="结束时间"
-                class="w-full"
+                style="width: 100%"
               />
             </el-form-item>
             <el-form-item label="即时配送">
@@ -112,7 +112,7 @@
 import { reactive, ref } from "vue";
 import { ElMessage } from "element-plus";
 import type { FormInstance, FormRules } from "element-plus";
-import SvgIcon from "@/components/svg-icon/index.vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const basicFormRef = ref<FormInstance>();
 const advancedFormRef = ref<FormInstance>();
@@ -180,3 +180,39 @@ const handleAdvancedReset = () => {
   advancedFormRef.value?.resetFields();
 };
 </script>
+
+<style scoped lang="scss">
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-content-gap);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.page-desc {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.card-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.page-container :deep(.el-card) {
+  border-radius: var(--radius-lg);
+}
+</style>
