@@ -24,3 +24,10 @@ dist-ssr
 *.sw?
 components.d.ts
 auto-imports.d.ts
+
+# 构建产物（多版本 dist 目录）
+dist-*/
+
+# AI 助手工作区数据
+.workbuddy/
+.zcode/

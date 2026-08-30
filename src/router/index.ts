@@ -1,48 +1,28 @@
 import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-router";
 
-// ==================== 类型定义 ====================
-
-/** 路由元信息 */
 export interface RouteMeta {
-  /** 页面标题 */
   title?: string;
-  /** 图标 */
   icon?: string;
-  /** 是否隐藏（不在侧边栏显示） */
   hidden?: boolean;
-  /** 是否固定在标签页 */
+  /** 仅有一个子路由时也以父级目录展示（否则自动扁平化为子级） */
+  alwaysShow?: boolean;
   affix?: boolean;
-  /** 是否不缓存（keep-alive） */
   noCache?: boolean;
-  /** 是否在面包屑中显示 */
   breadcrumb?: boolean;
-  /** 激活的菜单路径（用于详情页等） */
   activeMenu?: string;
-  /** 权限标识 */
   permission?: string;
-  /** 允许访问的角色 */
   roles?: string[];
-  /** 是否禁用 */
   disabled?: boolean;
-  /** 是否缓存（keep-alive） */
   keepAlive?: boolean;
-  /** 外链地址 */
   link?: string;
-  /** 是否内嵌 iframe */
   isIframe?: boolean;
 }
 
-/** 扩展的路由配置 */
 export type AppRouteRecordRaw = RouteRecordRaw & {
   meta?: RouteMeta;
   children?: AppRouteRecordRaw[];
 };
 
-// ==================== 静态路由配置 ====================
-
-/**
- * 常量路由（无需登录）
- */
 export const constantRoutes: AppRouteRecordRaw[] = [
   {
     path: "/login",
@@ -57,9 +37,6 @@ export const constantRoutes: AppRouteRecordRaw[] = [
   },
 ];
 
-/**
- * 基础路由（登录后默认拥有）
- */
 export const baseRoutes: AppRouteRecordRaw[] = [
   {
     path: "/dashboard",
@@ -69,10 +46,10 @@ export const baseRoutes: AppRouteRecordRaw[] = [
       {
         path: "",
         name: "Dashboard",
-        component: () => import("@/views/dashboard/index.vue"),
+        component: () => import("@/views/dashboard/dashboard.vue"),
         meta: {
-          title: "首页",
-          icon: "ri:dashboard-line",
+          title: "仪表盘",
+          icon: "ri:dashboard-3-line",
           affix: true,
           noCache: false,
         },
@@ -106,9 +83,6 @@ export const baseRoutes: AppRouteRecordRaw[] = [
   },
 ];
 
-/**
- * 错误页面路由
- */
 export const errorRoutes: AppRouteRecordRaw[] = [
   {
     path: "/404",
@@ -130,14 +104,10 @@ export const errorRoutes: AppRouteRecordRaw[] = [
   },
 ];
 
-// ==================== 路由实例 ====================
-
 const router = createRouter({
   history: createWebHashHistory(),
   routes: [...constantRoutes, ...baseRoutes, ...errorRoutes] as RouteRecordRaw[],
   scrollBehavior: () => ({ left: 0, top: 0 }),
 });
-
-// ==================== 导出 ====================
 
 export default router;

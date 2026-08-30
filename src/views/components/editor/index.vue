@@ -35,6 +35,7 @@
 
       <!-- 预览区域 -->
       <el-divider content-position="left">内容预览</el-divider>
+      <!-- eslint-disable-next-line vue/no-v-html -- 受控预览场景，内容来自当前会话用户输入 -->
       <div class="preview-area" v-html="renderContent"></div>
     </el-card>
   </div>
@@ -43,7 +44,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { ElMessage } from "element-plus";
-import SvgIcon from "@/components/svg-icon/index.vue";
+import SvgIcon from "@/components/SvgIcon/index.vue";
 
 const content = ref(`<h2>欢迎使用富文本编辑器</h2>
 <p>这是一个简单的富文本编辑器示例。你可以在这里输入和编辑内容。</p>

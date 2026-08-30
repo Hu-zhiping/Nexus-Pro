@@ -28,7 +28,7 @@ const router = useRouter();
   min-height: 100vh;
   padding: 24px;
   text-align: center;
-  background: var(--bg-page);
+  background: var(--color-bg-page);
 }
 
 .error-code {
@@ -46,13 +46,13 @@ const router = useRouter();
   margin: 24px 0 0;
   font-size: 22px;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--color-text-primary);
 }
 
 .error-desc {
   margin: 12px 0 0;
   font-size: 14px;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .error-btn {

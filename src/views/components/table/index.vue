@@ -131,3 +131,53 @@ const handleDelete = (row: TableItem) => {
   });
 };
 </script>
+
+<style scoped lang="scss">
+.page-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--layout-content-gap);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  margin: 0;
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+}
+
+.page-desc {
+  margin: var(--space-2) 0 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.page-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.search-card,
+.content-card {
+  border-radius: var(--radius-lg);
+
+  :deep(.el-card__body) {
+    padding: 16px 20px;
+  }
+}
+
+.content-card :deep(.el-card__body) {
+  padding: 20px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+</style>

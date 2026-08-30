@@ -243,7 +243,7 @@ const handleVerifyPhone = () => ElMessage.info("短信验证码已发送");
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
 }
 
@@ -262,21 +262,21 @@ const handleVerifyPhone = () => ElMessage.info("短信验证码已发送");
 
   .upload-tip {
     margin-top: 8px;
-    font-size: 12px;
+    font-size: var(--font-size-xs);
     color: var(--el-text-color-secondary);
   }
 }
 
 .form-tip {
   margin-left: 12px;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--el-text-color-secondary);
 }
 
 .security-section {
   h3 {
     margin: 0 0 24px;
-    font-size: 16px;
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--el-text-color-primary);
   }

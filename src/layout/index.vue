@@ -1,146 +1,306 @@
 <template>
-  <div class="app-layout">
-    <!-- 侧边栏 -->
-    <aside
-      id="app-sidebar"
-      :class="{
-        collapsed: isCollapse,
-        mobile: isMobile,
-        'mobile-hidden': isMobile && isCollapse,
-      }"
-    >
-      <Sidebar />
-    </aside>
+  <div
+class="layout" :class="{
+    'is-mobile': appStore.isMobile,
+    'is-sidebar-collapsed': appStore.isCollapse,
+  }">
+    <!-- 桌面端侧边栏 -->
+    <Sidebar v-if="!appStore.isMobile" class="layout__sidebar" />
 
-    <!-- 移动端遮罩 -->
-    <Transition name="fade">
-      <div v-if="isMobile && !isCollapse" class="layout-overlay" @click="appStore.toggleSidebar()" />
-    </Transition>
+    <!-- 移动端侧边栏 -->
+    <template v-else>
+      <Transition name="drawer-fade">
+        <div v-if="appStore.mobileSidebarOpen" class="layout__backdrop" @click="appStore.closeMobileSidebar()" />
+      </Transition>
+
+      <Transition name="drawer-slide">
+        <Sidebar v-if="appStore.mobileSidebarOpen" class="layout__sidebar is-drawer" />
+      </Transition>
+    </template>
 
     <!-- 主区域 -->
-    <main id="app-main">
-      <!-- 顶栏（sticky） -->
-      <div id="app-header">
-        <Navbar />
-        <TagsView v-if="showTagsView" />
-      </div>
+    <main class="layout__main">
+      <!-- 顶部栏 -->
+      <header class="layout__header">
+        <Header />
+      </header>
 
-      <!-- 内容区：四周 20px 留白 -->
-      <div id="app-content">
+      <!-- 标签页 -->
+      <nav v-if="appStore.layoutSettings.showTagsView" class="layout__tabs">
+        <TagsView />
+      </nav>
+
+      <!-- 内容区域 -->
+      <section class="layout__content">
         <AppMain />
-      </div>
+      </section>
     </main>
 
-    <Watermark v-if="showWatermark" :text="watermarkText" />
-    <Settings />
+    <!-- 设置抽屉 -->
+    <SettingsDrawer v-model="appStore.showSettings" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import Sidebar from "./components/sidebar/index.vue";
-import Navbar from "./components/nav-bar/index.vue";
-import TagsView from "./components/tags-view/index.vue";
-import Settings from "./components/settings/index.vue";
-import AppMain from "./components/app-main/AppMain.vue";
-import Watermark from "./components/watermark/index.vue";
 import useAppStore from "@/store/modules/app";
 
+import AppMain from "./components/AppMain/index.vue";
+import Header from "./components/Header/index.vue";
+import SettingsDrawer from "./components/SettingsDrawer/index.vue";
+import Sidebar from "./components/Sidebar/index.vue";
+import TagsView from "./components/TagsView/index.vue";
+
 const appStore = useAppStore();
-const isMobile = ref(false);
-
-const isCollapse = computed(() => appStore.isCollapse);
-const showTagsView = computed(() => appStore.layoutSettings.showTagsView);
-const showWatermark = computed(() => appStore.layoutSettings.showWatermark);
-const watermarkText = computed(() => appStore.layoutSettings.watermarkText);
-
-let resizeHandler: () => void;
-
-onMounted(() => {
-  resizeHandler = () => {
-    const prev = isMobile.value;
-    isMobile.value = window.innerWidth < 768;
-    if (isMobile.value && !appStore.isCollapse) appStore.setSidebarCollapsed(true);
-    if (prev && !isMobile.value && appStore.isCollapse) appStore.setSidebarCollapsed(false);
-  };
-  window.addEventListener("resize", resizeHandler);
-  resizeHandler();
-});
-
-onUnmounted(() => window.removeEventListener("resize", resizeHandler));
 </script>
 
-<style scoped>
-/* ===== 根布局：flex 横向 ===== */
-.app-layout {
+<style scoped lang="scss">
+.layout {
+  position: relative;
+
   display: flex;
+
   width: 100%;
-  min-height: 100vh;
-  background: var(--bg-page);
+  height: 100vh;
+
+  overflow: hidden;
+
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+
+  font-family: var(--font-family-base);
+
+  transition:
+    background-color var(--transition-base),
+    color var(--transition-base);
 }
 
-/* ===== 侧边栏（深色，背景由 sidebar 组件控制） ===== */
-#app-sidebar {
+/* =========================================================
+ * Sidebar
+ * ========================================================= */
+
+.layout__sidebar {
   position: relative;
-  z-index: 200;
-  width: var(--sidebar-width);
+
+  flex: 0 0 var(--layout-sidebar-width);
+
+  width: var(--layout-sidebar-width);
   height: 100vh;
-  flex-shrink: 0;
-  overflow: hidden;
+
+  z-index: 200;
+
   transition:
     width var(--transition-slow),
-    transform var(--transition-slow);
+    flex-basis var(--transition-slow);
 }
 
-#app-sidebar.collapsed {
-  width: var(--sidebar-collapsed-width);
-}
+/* =========================================================
+ * Main
+ * ========================================================= */
 
-#app-sidebar.mobile {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  z-index: 300;
-  box-shadow: var(--shadow-md);
-}
+.layout__main {
+  position: relative;
 
-#app-sidebar.mobile-hidden {
-  transform: translateX(-100%);
-}
-
-.layout-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 250;
-  background: rgba(0, 0, 0, 0.45);
-}
-
-/* ===== 主区域：flex 纵向 ===== */
-#app-main {
   display: flex;
   flex: 1;
   flex-direction: column;
+
   min-width: 0;
-  height: 100vh;
+  min-height: 0;
+
   overflow: hidden;
+
+  background: var(--color-bg-page);
+
+  transition: background-color var(--transition-base);
 }
 
-/* ===== 顶栏：sticky ===== */
-#app-header {
-  position: sticky;
-  top: 0;
+/* =========================================================
+ * Header
+ * ========================================================= */
+
+.layout__header {
+  position: relative;
+
+  flex: 0 0 var(--layout-header-height);
+
+  height: var(--layout-header-height);
+
   z-index: 100;
-  flex-shrink: 0;
-  background: var(--bg-card);
-  border-bottom: 1px solid var(--border-light);
+
+  background: var(--color-bg-card);
+
+  border-bottom: 1px solid var(--color-border-light);
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
 }
 
-/* ===== 内容区：四周 20px 留白 ===== */
-#app-content {
+/* =========================================================
+ * Tabs
+ * ========================================================= */
+
+.layout__tabs {
+  position: relative;
+
+  flex: 0 0 var(--layout-tabs-height);
+
+  height: var(--layout-tabs-height);
+
+  z-index: 90;
+
+  background: var(--color-bg-card);
+
+  border-bottom: 1px solid var(--color-border-light);
+
+  overflow: hidden;
+
+  transition:
+    background-color var(--transition-base),
+    border-color var(--transition-base);
+}
+
+/* =========================================================
+ * Content
+ * ========================================================= */
+
+.layout__content {
+  position: relative;
+
   flex: 1;
-  padding: var(--page-padding);
+
+  min-width: 0;
+  min-height: 0;
+
   overflow: auto;
-  background: var(--bg-page);
+
+  background: var(--color-bg-page);
+
+  transition: background-color var(--transition-base);
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+/* =========================================================
+ * Sidebar Collapsed
+ * ========================================================= */
+
+.layout.is-sidebar-collapsed {
+  .layout__sidebar {
+    flex-basis: var(--layout-sidebar-collapse-width);
+
+    width: var(--layout-sidebar-collapse-width);
+  }
+}
+
+/* =========================================================
+ * Mobile
+ * ========================================================= */
+
+.layout.is-mobile {
+  .layout__main {
+    width: 100%;
+  }
+}
+
+/* =========================================================
+ * Mobile Sidebar
+ * ========================================================= */
+
+.layout__sidebar.is-drawer {
+  position: fixed;
+
+  top: 0;
+  left: 0;
+  bottom: 0;
+
+  z-index: 2000;
+
+  width: var(--layout-sidebar-width);
+
+  flex: none;
+
+  box-shadow: var(--shadow-lg);
+}
+
+/* =========================================================
+ * Backdrop
+ * ========================================================= */
+
+.layout__backdrop {
+  position: fixed;
+
+  inset: 0;
+
+  z-index: 1999;
+
+  background: var(--color-bg-overlay);
+
+  backdrop-filter: blur(2px);
+
+  -webkit-backdrop-filter: blur(2px);
+}
+
+/* =========================================================
+ * Drawer Animation
+ * ========================================================= */
+
+.drawer-fade-enter-active,
+.drawer-fade-leave-active {
+  transition: opacity var(--transition-base);
+}
+
+.drawer-fade-enter-from,
+.drawer-fade-leave-to {
+  opacity: 0;
+}
+
+.drawer-slide-enter-active,
+.drawer-slide-leave-active {
+  transition: transform var(--transition-slow);
+}
+
+.drawer-slide-enter-from,
+.drawer-slide-leave-to {
+  transform: translateX(-100%);
+}
+
+/* =========================================================
+ * Scrollbar
+ * ========================================================= */
+
+.layout__content::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.layout__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layout__content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-round);
+}
+
+.layout__content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-border-hover);
+}
+
+/* =========================================================
+ * Reduced Motion
+ * ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .layout,
+  .layout__main,
+  .layout__header,
+  .layout__tabs,
+  .layout__content,
+  .layout__sidebar {
+    transition: none !important;
+  }
 }
 </style>
